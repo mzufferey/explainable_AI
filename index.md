@@ -1,18 +1,31 @@
-# Single cell RNA-seq
+# Explainable IA
 
 
 
-### Websites
+### Websites of particular interest
 
 
 
-### Articles
+### Articles of particular interest
 
 
 
+### Books of particular interest
 
+- <a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning</a> (A Guide for Making Black Box Models Explainable) - Molnar 2021
 
-### R packages
+Christoph Molnar
 
+### Reading notes
 
+- <a href="reading_notes/bayelime_zhao2021">Bayesian Local Interpretable Model-Agnostic Explanations</a> - Zhao et al. 2021
+
+### Other documents
+
+- <a href="reading_notes/glossary.md">glossary </a>
+
+### Python packages
+
+- <a href=" https://github.com/SeldonIO/alibi">SeldonIO</a>: "Algorithms for Explaining Machine Learning Models")
+- <a href="https://github.com/x-y-zhao/BayLime">BayLime</a> 
 
