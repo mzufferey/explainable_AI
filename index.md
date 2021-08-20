@@ -24,8 +24,13 @@ Christoph Molnar
 
 - <a href="reading_notes/glossary.md">glossary </a>
 
+### R packages
+
+- [lime package](https://cran.r-project.org/web/packages/lime/index.html) and [iml](https://cran.r-project.org/web/packages/iml/index.html)
+
 ### Python packages
 
 - <a href=" https://github.com/SeldonIO/alibi">SeldonIO</a>: "Algorithms for Explaining Machine Learning Models")
 - <a href="https://github.com/x-y-zhao/BayLime">BayLime</a> 
+- [lime](https://github.com/marcotcr/lime) 
 
