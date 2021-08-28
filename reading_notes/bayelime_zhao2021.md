@@ -145,7 +145,7 @@ It follows that
  (µ0 = mean vector; λ = precision)
 
 1. **non-informative priors**
-   - µ~0~: zero mean vector 0
+   - µ~0~: zero mean vector
    - λ and α: fitted with Bayesian model selection . 
      - use the established algorithm to fit α and λ from data folllowing the algorithm of [MacKay, 1992, Tipping, 2001]. 
      - implicit solutions for λ and α: they are obtained by starting with initial values and then iterating over some interval equations until convergence.
@@ -269,7 +269,7 @@ How varying the λ and α affects the robustness ? Boils down to how much contri
 
 ##### RQ3a (explanation fidelity - XAI)
 
-GradCAM provides fundamentally different grey-box information as priors to the balck-box LIME. 
+GradCAM provides fundamentally different grey-box information as priors to the black-box LIME. 
 
 As expected, BayLIME performs better than both GradCAM (the prior) and LIME (new observations), thanks to its unique advantage of incorporating diverse information (cf. AUC scores of the dele- tion and insertion metrics).
 

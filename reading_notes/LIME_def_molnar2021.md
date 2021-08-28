@@ -19,7 +19,7 @@ Idea of LIME
 
 Mathematically, **local surrogate models with interpretability constraint** can be expressed as follows:
 
-$explanation(x)=argmin_{g∈G}L(f,g,\pi_{x})+Ω(g)$
+$explanation(x) = {\underset{g∈G}{argmin}} \textrm{ } L(f, g, π_{x}) + Ω(g)$ 
 
 
 
