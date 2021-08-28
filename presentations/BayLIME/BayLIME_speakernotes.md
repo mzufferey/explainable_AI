@@ -83,7 +83,12 @@ the weights are determined by some kernel function
 
 new dataset consisting of the perturbed inputs and the cor- responding predictions made by the black-box AI model can be generated, upon which LIME trains a surrogate model that is interpretable to humans (e.g. linear regressors)
 
-6. explain the prediction by interpreting the local model (e.g. the coefficients of the regressor as an indication of feature importance)
+6. explain the prediction by interpreting the local model (e.g. the absolute values of the coefficients of the regressor as an indication of feature importance, based on which rankings can be done)
+
+Then, the absolute values of the coefficient vector β
+represent the importance of the m features, based on which
+rankings can be done. By default, LIME 9 uses the Ridge
+regressor with weighted samples; with the ridge regularization parameter r; when r=0, this is weighted OLS
 
 (Molnar 2021, §5.8)
 
@@ -131,7 +136,7 @@ if we remove the word "blame" from the text, we expect the classifier to predict
 
 Intuitively, an explanation is a local linear approximation of the model's behaviour. 
 
-
+!!! CHANGE WITH THE EXAMPLE FROM THE BLOG !!!
 
 
 
@@ -266,7 +271,9 @@ especially in the 1 sample 1 feature case, it becomes apparent that
   * = the **"pseudo-count" of prior sample size** based on which we form the prior estimates $µ_{0}$  ??????
 * as for the part with the ML estimates, it is scaled by the **"accurate-actual-count" of observation sample size**, i.e. the actual observation of the *n* new samples scaled by the precision *α*  and the weights $w$ of the new samples
 
+?????
 
+link between covariance and counts ???!!!
 
 ### BayeLIME: procedure recap
 
@@ -440,17 +447,20 @@ They implement 3 ways of getting priors for their experiments, that can also giv
    * used as illustrative example; for the 2 first research questions (robustness and consistency)
 
 2. The other way is with other XAI techniques
+
    - as a matter of fact, there are many XAI tools; explanations by some other diverse XAI explainers based on fundamentally different theories to LIME (e.g., gradient-based vs perturbation- based, global vs local) may provide useful prior knowledge
    - they implement it by using GradCAM  results as the priors
 
+   This way of implementing prior was used for assessing explanation fidelity, so the 3d research question.
+
 3. The last implemented way to obtain prior is with Validation and Verification (V&V) methods 
+
    - V&Vs methods directly analyse the behaviour of the underlying AI model
    - this may in- dicate the importance of certain features, yielding priors required by BayLIME
    - for example, when explaining a prediction made by an infected model, (imperfect) detection tools may provide prior knowledge on possible backdoor triggers.
    - this scenario is implemented using the results of  NeuralCleanse
-   - 
 
-1. 
+   This way of implementing prior was also used for assessing explanation fidelity, so the 3d research question.
 
 
 
@@ -464,103 +474,202 @@ They implement 3 ways of getting priors for their experiments, that can also giv
 *the features with a positive influence for the specific class*
 *which is chosen as the prediction.*
 
-NeuralCleanse 
+*NeuralCleanse* 
 
-he first robust and generalizable detection and
-mitigation system for DNN backdoor attacks. Our techniques
-identify backdoors and reconstruct possible triggers.
+*he first robust and generalizable detection and*
+*mitigation system for DNN backdoor attacks. Our techniques*
+*identify backdoors and reconstruct possible triggers.*
 
-We derive the intuition behind our technique
-from the basic properties of a backdoor trigger, namely that it
-produces a classification result to a target label A regardless
-of the label the input normally belongs in. Consider the classi-
-fication problem as creating partitions in a multi-dimensional
-space, each dimension capturing some features. Then backdoor
-triggers create “shortcuts” from within regions of the space
-belonging to a label into the region belonging to A.
+*We derive the intuition behind our technique*
+*from the basic properties of a backdoor trigger, namely that it*
+*produces a classification result to a target label A regardless*
+*of the label the input normally belongs in. Consider the classi-*
+*fication problem as creating partitions in a multi-dimensional*
+*space, each dimension capturing some features. Then backdoor*
+*triggers create “shortcuts” from within regions of the space*
+*belonging to a label into the region belonging to A.*
 
-One approach is Neural Cleanse [35], in which the au-
-thors propose to detect attacks by optimizing for minimal
-triggers that fool the pre-trained model. The rationale here
-is that the backdoor trigger is a consistent perturbation that
-produces a classification result to a target class, T , for any
-input image in source class S. Therefore, the authors seek a
-minimal perturbation that causes the model to classify the
-images in the source class as the target class. The opti-
-mal perturbation then could be a potential backdoor trigger.
-This promising approach is computationally demanding as
+*One approach is Neural Cleanse [35], in which the au-*
+*thors propose to detect attacks by optimizing for minimal*
+*triggers that fool the pre-trained model. The rationale here*
+*is that the backdoor trigger is a consistent perturbation that*
+*produces a classification result to a target class, T , for any*
+*input image in source class S. Therefore, the authors seek a*
+*minimal perturbation that causes the model to classify the*
+*images in the source class as the target class. The opti-*
+*mal perturbation then could be a potential backdoor trigger.*
+*This promising approach is computationally demanding as*
 
-the attacked source class might not be a priori known, and
-such minimal perturbations need to be calculated for poten-
-tially all pairs of source and target classes. Besides, a strong
-prior on the type of backdoor trigger is needed to be able to
-discriminate a possibly benign minimal perturbation from
-an actual backdoor trigger
+*the attacked source class might not be a priori known, and*
+*such minimal perturbations need to be calculated for poten-*
+*tially all pairs of source and target classes. Besides, a strong*
+*prior on the type of backdoor trigger is needed to be able to*
+*discriminate a possibly benign minimal perturbation from*
+*an actual backdoor trigger*
 
-Definition of backdoor: misclassify any sample with trigger into the target label, 
-regardless of its original label
+*Definition of backdoor: misclassify any sample with trigger into the target label,* 
+*regardless of its original label*
 
-* for the 2 first research questions, xplanations of a set of ***\*similar instances\**** (RQ1+RQ2)
+### Results: consistency improvement
 
-  \- the average importance of each feature in that set collectively forms the prior mean vector
+Let's look at the result that looks at compares consistency of BayLIME with the one of LIME.
 
- \* ***\*XAI techniques\**** (RQ3a)
+These curves  show the Kendall’s W measurements as a function of the perturbed sample size n. Each panel is for different set of parameter settings.
 
-   \- explanations obtained from other XAI explainers 
+In red, we have the curve for LIME. We observe very low consistency when n is relatively small (e.g., n < 200); an issue that was already reported in previous studies. 
 
-   \- here: GradCAM results as priors
+Non-informative BayLIME is indistinguishable from LIME. This is not suprising as both of them only exploit information from the randomly generated samples.
 
-\* ***\*Validation and Verification (V&V) methods\**** (RQ3b)
+The smaller the sample size is, the greater the randomness. This explains the increase in consistency when n increases.
 
-   \- direct analysis of the behaviour of the underlying AI model
+BayLIME  with partial or full prior knowledge does not have this issue of the sample size.
 
-   \- e.g. detection tools may provide prior knowledge on possible backdoor triggers
+To assess how different priors can affect the consistency, we need to look at the $\lambda/\alpha$ value. This can be viewed as a regularization term:
 
-   \- here:  NeuralCleanse results as priors
+- a larger value (small $\alpha$) penalizes the training data -> the prior knowledge dominates the posterior ??????
+- a small value (small $\lambda$)  means no penalty on the data -> the posterior is dominated by the new observation
 
-Figure 2: Kendall’s W in k = 200 repeated explanations by LIME/BayLIME on random Boston house-price instances. Each set shows an illustrative combination of α and λ. Same patterns are observed on images, cf. Appendix B for more.
-only
+So we look now at the yellow curves that can have variable alpha and lambda parameter settings.
 
+In the A and C figures, this $\lambda/\alpha$ ratio is the same (=20). This means that how much the prior or the new data contributes to the posterior is fixed; so the ability of "averaging out" sampling noise is also fixed.
 
+When the ratio increases (fig B and D, $\lambda/\alpha$  = 200), the prior dominates more and more the posterior, and so ability of averaging out sampling noise is even stronger. This explains the higher level of the yellow curves in B/D compared to A/C
 
-The red curves in Fig. 2 present the Kendall’s W measurements as a function of the perturbed sample size n. Although it increases quickly, we observe very low consistency when n is relatively small (e.g., n < 200). These results support our earlier conjecture on the inconsistency issue of LIME, especially when n has to be limited by an upper-bound due to efficiency considera- tions. Non-informative BayLIME is indistinguishable from LIME, since both of them are only exploiting the inform- ation from the n samples that generated randomly – the presence of randomness means that the results of sampling cannot be duplicated if the process were repeated. Naturally, the more sparse the samples are, the greater randomness presents in the dataset. Thus, LIME and non-informative BayLIME show monotonic trends as n increases.
+As for BayLIME with partial informative priors (blue curves), we observe worse consistency with smaller λ (e.g. in C vs. D). Here also: smaller $\lambda$ means less contributions from the priors to the posteriors, meaning with less ability to average out the randomness in the samples.
 
-Both the plots of BayLIME with full informative priors (yellow curves) in Fig. 2 (A) and (C) have a regularization
+when n → +∞, all plots will eventually converge (to the measurement based on MLE using infinitely large samples)
 
+*dans l'équation: lambda multiplie le mu_0 et alpha multiplie le betaMLE (the new samples)*
 
+*gaussian prior of beta governed by the precision parameter lambda*
 
-factor λ/α = 20, and are basically identical. This is because, once λ/α = 20 is fixed, the “proportion” of contributions to the posteriors by the priors and the new data is fixed. In other words, given n samples, the ability of “averaging out” sampling noise by the priors is fixed. When λ/α increases to 200, as shown by the yellow curves in Fig. 2 (B) and (D), such ability of averaging out sampling noise is even stronger, which explains why Kendall’s W measurements in this case are higher than the case of λ/α = 20. For BayLIME with partial informative priors (blue curves in Fig. 2), we observe that smaller λ results in worse consistency, e.g., Fig. 2 (C) vs (D). Again, Remark 1 applies here – smaller λ implies less contributions from the priors to the posteriors, meaning with less ability to average out the randomness in the samples.
-Starting from a non-zero small number, as n increases, we can see BayLIME with partial/full informative priors may exhibit an uni-modal pattern, e.g., the Fig. 2 (C)5 with a minimum point. This represents a tension between the per- fectly consistent prior knowledge (does not change at all in repeated explanations) and quite consistent MLE based on large samples. There must be a “balance-point” in-between that compromises both ends of the tension, yielding a min- imised consistency. Finally, when n → +∞, it is trivial to see (e.g., by taking the limit of Eq. (12) as a function of n), all plots will eventually converge (to the measurement based on MLE using infinitely large samples).
-RQ2.
+*covariance of the corresponding posterior distribution over w*
 
+*SN-1= αI + βΦ T Φ.*  [lambda*I + alpha...]
 
+*Maximization of this posterior distribution with respect to w is therefore equiva-*
+*lent to the minimization of the sum-of-squares error function with the addition of a*
+*quadratic regularization term, corresponding to (3.27) with λ = α/β.*
 
-Fig. 3 are box-and-whisker charts providing insights on the general robustness of eight AI explainers to kernel width settings, in which the median values defined by Eq. (2) are marked, as usual, by horizontal bars inside the boxes.
+[in the notation used in BayLIME: alpha/beta -> lambda/alpha]
 
-
-
-Figure 3: The general (un-)robustness of eight AI explainers to kernel settings (box-and-whisker plots without outliers).
-Again, LIME and BayLIME with non-informative priors exhibit similar robustness, since there is no prior knowledge being considered, rather the data solely determines the ex- planations of both. In stark contrast, when either partial or full prior knowledge is taken into account, we observe an obvious improvement on the robustness to kernel settings. 
-
-The regularisation factor λ/α and Remark 1 are still handy here in the discussions on how varying the λ and α affects the robustness – it all boils down to how much contribution from the priors (that is independent from kernel setting), compared with the contribution from the new data (that is sensitive to kernel settings), to the posteriors.
-
-
-
-Figure 4: Two sets of examples (n = 300), and the average AUC (based on 1000 images per value of n) of the deletion (smaller is better) and insertion (bigger is better) metrics of BayLIME comparing with other XAI methods.
+## Results: robustness to kernel settings improvement
 
 
 
-Fig. 4 first shows two sets of such examples via the AUC scores of the dele- tion and insertion metrics, respectively. Then statistics on the average scores (varying n) are shown in the last row of Fig. 4. We observe: (i) BayLIME performs better than SHAP and LIME, while there is a converging trend when n increases. This aligns with the second point in Remark 1. (ii) GradCAM is not a function of n (thus showing hori- zontal lines) and only performs better in the corner cases when n is extremely small (even smaller than the number of features). We conclude that, compared to the other 3 XAI methods, BayLIME has better fidelity in the middle and most practical range of n (e.g., 100∼400 in our case). For
+Here we have the boxplot of the metric introduced earlier that quantifies the robustness to kernel settings. 
+
+High value indicates reduced robustness. 
+
+Here again LIME and BayLIME with non-informative priors exhibit similar robustness, since there is no prior knowledge being considered. They exhibit the worst result.
+
+As before, it is insightful to look how the $\lambda/\alpha$  ratio affects the robustness.
+
+When the contribution from the priors (that is independent from kernel setting), dominates over the contribution from the new data (that is sensitive to kernel settings), which means large $\lambda/\alpha$ value, the robustness increases.
+
+In the case of the full prior, we can see it by looking at the trend of the three last boxes that represent an increasing ratio (ratio=200, 400, 2000).
+
+The same holds for the 3 boxes of partial informative priors, which show higher robustness when $\lambda$ increases.
+
+## Results: explanation fidelity - XAI methods
+
+Now we can move to the last research question. We assess here the explanation fidelity of BayLIME compared to another XAI method GradCAM
+
+Here we have two set of examples for the AUC scores that are shown;
+
+With 
+
+- GradCAM on the top - which represent the prior used for BayLIME
+
+- LIME in  the middle  - which only use the newly generated data
+
+- and BayLIME at the bottom which, in a certain manner, combines the two
+
+On the left we have the scores for the deletion
+
+* BayLIME provides the smallest value; LIME the highest
+* recall that a good explanation is represented by a sharp drop in the probability, so a low AUC -> so BayLIME performs better
+
+On the right we have the scores for the insertion metric
+
+* BayLIME provides the greatest value; LIME the smallest
+* here is it the reverse: the probability should rapidly increase, hence higher AUC means better explanation -> here again performs better
+
+*deletion decrease in the probability of the predicted label when starting with a complete instance and then gradually removing top-important features*; *good explanation = sharp drop (low AUC as a function of the fraction of removed features)*
+
+*insertion: increase in the probability as more and more important features are introduced*; *good explanation = higher AUC*
+
+*Figure 4: Two sets of examples (n = 300), and the average AUC (based on 1000 images per value of n) of the deletion (smaller is better) and insertion (bigger is better) metrics of BayLIME comparing with other XAI methods.*
+
+## Results: explanation fidelity - XAI methods
+
+Then we can look at how these average AUC scores vary along with $n$
+
+We observe that
+
+* BayLIME performs better than SHAP and LIME (smaller deletion AUCs, higher insertion AUCs)
+* but there is a converging trend when n increases
+
+This highlights the importance of the prior when the number of samples is small.
+
+We also see that 
+
+* GradCAM is not a function of $n$ and only performs  when $n$ is extremely small (even smaller than the number of features)
+
+ We conclude that, compared to the other 3 XAI methods, BayLIME has better fidelity in the middle and most practical range of n
+
+*SHAP (Shapley Additive Explanations) by Lundberg and Lee ([2016](https://dl.acm.org/doi/10.5555/3295222.3295230)) is a method to explain individual predictions, based on the game  theoretically optimal Shapley values. Shapley values are a widely used  approach from cooperative game theory that come with desirable  properties. The feature values of a data instance act as players in a  coalition. The Shapley value is the average marginal contribution of a  feature value across all possible coalitions[[1](https://christophm.github.io/interpretable-ml-book/shap.html#shap-feature-importance)].*
+
+*https://towardsdatascience.com/explainable-ai-xai-with-shap-regression-problem-b2d63fdca670*
+
+## Results: explanation fidelity - V&V methods
+
+The V&V tool NeuralCleanse yields reversed triggers as the approximation of backdoor, which are far from perfect (as we can see on the figure (1st row, 2nd column), with IoU = 0);  despite being very closed to.
+
+Even directly apply LIME on an attacked image may provide a better IoU than NeuralCleanse. 
+
+Nevertheless, BayLIME - which considers both the reversed triggers and the surrogate model - performs the best. 
+
+We can see it here on the 2 images and in the table which shows to average IoU of 500 random images.
 
 
+
+
+
+ As shown in Table 2, statistics on averaging the IoU of 500 random images confirm the above observation (NeuralCleanse is independent from individual images).
+Table
 
 Figure 5: Two examples and their IoU measurements of BayLIME using V&V results as priors (reversed triggers by NeuralCleanse), compared to the results of NeuralCleanse and LIME applied individually. LIME and BayLIME use the top-few features (where each feature is a fixed size square superpixel, cf. Appendix A.2 for details) such that the total number of pixels is the same as the ground truth. NB: We omit the background image to highlight the triggers only.
 
-E.g., in the BadNet example of Fig. 5 (1st row), the reversed trigger completely missed the ground truth trigger (thus IoU = 0), despite being very closed to. Even directly apply LIME on an attacked image may provide a better IoU than NeuralCleanse. Nevertheless, BayLIME performs the best after considering both the reversed triggers and a surrogate model as LIME (trained on the same number of n samples). As shown in Table 2, statistics on averaging the IoU of 500 random images confirm the above observation (NeuralCleanse is independent from individual images).
+
+
+### Conclusion
+
+BayLIME:
+
+* is the first to exploit prior knowledge for better consistency, robustness to kernel settings and explanation fidelity
+
+* improves over LIME
+
+* the prior knowledge is independent from the causes of inconsistency and unrobustness (thus benefits both properties)
+
+* improve fidelity by including additional useful information 
+
+* performs better than V&V and other XAI methods
 
 
 
 
+
+$\Rightarrow$ a way to obtain better explanations of AI models
+
+
+
+$\Rightarrow$ a (Bayesian) way to inject knowledge in AI model interpretation (but defining good priors remains challenging !)
+
+
+
+### Appendix
 
 
 

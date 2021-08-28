@@ -398,9 +398,6 @@ un truc genre voir pour croire saint
 
 ## Results: consistency improvement
 
-* non-informative BayLIME indistinguishable from LIME
-  * monotonic trends as *n* increases for both LIME and non-informative BayLIME
-* by contrast, BayLIME with partial/full informative priors "averages out" the sampling noise
 
 
 <!-- <img src="pictures/fig2.png" width="600" align=left> -->
@@ -411,41 +408,30 @@ p {
 }
 </style>
 <p> -->
-
-
-
 ![width:880px left](pictures/fig2.png)
 
 
+* non-informative BayLIME indistinguishable from LIME, with monotonic increasing trends as *n* increases 
+* by contrast, BayLIME with partial/full informative priors "averages out" the sampling noise
+* $\lambda/\alpha$: large (resp. small) value = the prior is dominated by the prior knowledge (resp. new data)
+  * when it increases, the ability of averaging out sampling noise is even stronger.  
+* when $n → +∞$,  all converge to MLE
 
----
-## Results: consistency improvement
 
-How different priors affect consistency ?
 
-* use the auxiliary of the factor $λ/α$ ("regularization coefficient")
- * when $α\simeq0$: huge penalty on the data
- * when $λ\simeq0$: no penalty on the data
-* $λ/α = 20$: identical curves for BayLIME with full informative priors 
-* when $λ/α$ increases to 200: stronger ability of averaging out sampling noise (higher Kendall's W)
 
-when $n → +∞$,  all converge to the measurement based on MLE
 
 ---
 ## Results: robustness to kernel settings improvement
 
-* similar robustness for LIME and BayLIME with non-informative priors 
-* either partial or full prior knowledge improves robustness 
-<br>
 
 ![width:400px center](pictures/fig3.png)
 
----
-## Results: robustness to kernel settings improvement
+<br>
 
-How varying the $λ$ and $α$ affects the robustness ? 
-
-* contribution from the priors (independent from kernel setting) $\leftrightarrow$  contribution from the new data (sensitive to kernel settings), to the posteriors (cf. $λ/α$)
+* similar (un)robustness for LIME and BayLIME with non-informative priors 
+* either partial or full prior knowledge improves robustness 
+* increased robustness for large $\lambda/\alpha$
 
 
 ---
