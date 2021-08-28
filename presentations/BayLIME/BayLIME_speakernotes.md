@@ -185,90 +185,338 @@ Another drawback of LIME is its **unrobustness** to kernel settings
 
 
 
-### BayeLIME
+### BayeLIME: LIME in a Bayesian way
 
 Now that we got an overview of LIME and its weaknesses; we can move to the method described in the article I am presenting, namely BayeLIME, which specifically aims at adressing the 2 main drawbacks of LIME
 
 BayeLIME is a Bayesian modification of LIME.
 
-In very few words, BayeLIME is a “Bayesian principled weighted sum” of the prior knowledge and the estimates based on new samples.
+so in this bayesian linear regression framework
 
-The rationale is that the combination between prior knowledge and the estimates based on new samples will allow to 
+we are interested in the posterior distribution of $\mu _n$which is the posterior mean vector of $\beta$ the coefficient vector of the model
 
-* improve consistency by averaging out randomness 
-* improve robustness by averaging out effects from kernels
-* improve explanation fidelity by combining diverse information
+for an input of $n$ samples and $m$ features,  $\mu _n$ is defined as follows:
+$$
+µ_n = (λI_m + αX^TWX)^{−1}λI_mµ_0 +\\
+(λI_m + αX^TWX)^{−1}αX^TWXβ_{MLE}
+$$
+where 
 
+* $µ_0$ and $\mu_n$ are respectively the prior and posterior mean vector of $\beta$, which is the coefficient vector of $m$ features for the linear regression model
+* $β_{MLE}$ is the Maximum Likelihood Estimates (MLE) for the linear regression model on the weighted samples.
 
+- $α$ the precision parameter (reciprocal of the variance) representing noise in this linear assumption
 
-As for LIME, the local surrogate model is trained on weighted samples perturbed around the instance of interest, with weights rep-resenting their respective proximity to the instance.
+  (Bishop: $\alpha \rightarrow 0$ gives infinitely broad prior; $S_0 = \alpha^{-1}I$ )
 
+-  $\lambda$ = precision parameter that governs the Gaussian prior of the covariance matrix of $\beta$
 
+* $W$ = diagonal matrix of the weights calculated by a kernel function according to the new samples’ proximity to the original instance 
+* $I$ is of course the identity matrix
 
-the weights are proportional to
-the “pseudo-count” of prior sample size based on which we form our prior estimates µ_{0}µ 
-0
-	
-
-the “accurate-actual-count” of observation sample size, i.e. the actual observation of the n new samples scaled by the precision α
-
-
-
-
-
-
+the formula looks rather complicated but the key point here is to observe that it is a **weighted sum** of the prior estimates $µ_0$ and the likelihood of the new samples $β_{MLE}$, in other words a **Bayesian combination of prior knowledge and the new observations**
 
 
 
+NB: In *statistics*, *precision* is the reciprocal of the variance, and the *precision* matrix is the matrix inverse of the *covariance matrix*
+
+*(NB: Under normal error assumption, as is typically assumed in linear regression, the MLE and the LSE are the same)*
+
+*$β_{MLE} = (X^TWX)^{−1}X^TWy$ is the Maximum Likelihood Estimates (MLE) for the linear regression model on the weighted samples*
+
+*i.e. the estimated parameter values are linear combinations of the observed values*
+
+*(the OLS estimators in the ˆβ vector are a linear combination of existing random variables (X and y))*
+
+*[NB: as Gaussian, MLE = OLS]*
+
+*beta = cov(x,y) / var(x)*
+
+*the first term relates to denominator, the second to numerator*
+
+*the variance covariance matrix of the OLS estimator ^beta = σ2(X′X)−1*
+
+*X′X is (n times) its sample variance, and (X′X)−1 its recirpocal. So the higher the variance = variability in the  regressor, the lower the variance of the coefficient estimator: the more variability we have in the explanatory variable, the more accurately we can estimate the unknown coefficient.*  
+
+*f β^ is inversely proportional to the variance of x*
+
+*Thus, the diagonal elements of **X**' **X** are sums of squares, and the off-diagonal elements are cross products. Note that the cross product matrix **X**' **X** is a [symmetric](https://stattrek.com/statistics/dictionary.aspx?definition=Symmetric_matrix) matrix.*
+
+*https://stattrek.com/matrix-algebrasums-of-squares.aspx*
+
+*(XTX)−1XTY∼N[β,(XTX)−1σ2] =>  (XTX)−1XT is just a complicated scaling matrix that transforms the distribution of Y*
+
+*larger variability of the predictor variable will in general lead to  more precise estimation of its coefficient. This is the idea often  exploited in the design of experiments, where by choosing values for the (non-random) predictors, one tries to make the determinant of (X^TX) as large as possible, the determinant being a measure of variability.*
+
+*In addition, as the number of measurements gets larger, the variance of  the estimated parameters will decrease. So, overall the absolute value  of the entries of X**T**X will be higher, as the number of columns of X**T is n and the number of rows of X is n, and each entry of X**T**X is a sum of n product pairs. The absolute value of the entries of the inverse (X**T**X)−1 will be lower.* 
+
+*Since each weight is inversely proportional to the error variance, it reflects the information in that observation*
+
+*sample VCV is (1/n)XTX*
+
+*X**T**X is not invertible : 1) more parameters than samples; 2) not all columns independent*
+
+### BayeLIME: LIME in a Bayesian way
+
+how are the weights of this weighted sum defined ?
+
+especially in the 1 sample 1 feature case, it becomes apparent that 
+
+* if we look at the part with $\mu_0$ , it is proportional to  $\lambda I_m$ 
+  * = the **"pseudo-count" of prior sample size** based on which we form the prior estimates $µ_{0}$  ??????
+* as for the part with the ML estimates, it is scaled by the **"accurate-actual-count" of observation sample size**, i.e. the actual observation of the *n* new samples scaled by the precision *α*  and the weights $w$ of the new samples
 
 
-index ofdispersion (IoD) of each feature in repeated runs. The new metric weights the IoD of the rank of each feature by its importance,
+
+### BayeLIME: procedure recap
+
+1. before the new experiment, form the **prior estimate** of $µ_{0}$ based on $λ$ data points 
+2. in the experiments, collect **n** new samples and consider their precision ($α$) and weights ($w_{c}$) for forming a **ML estimate** $β_{MLE}$
+3. **combine $µ_{0}$ and $β_{MLE}$** according to their proportions of the effective samples size ($λ$ and $αw_{c}n$, respectively)
+4. calculate the **posterior precision** captured by all effective samples (i.e. $λ + αw_{c}n$); the posterior precision gives the confidence in the new posterior estimate
 
 
 
-this global Lipschitz value quantifies the robust- ness of an explainer to the change of kernel width. The computation of L can be seen as an optimisation problem
+###  BayeLIME: options for the priors
 
-which, unfortunately, is very challenging to solve analytic- ally or to estimate numerically
+regarding the kind of priors, BayLIME implements 3 options
 
-To bypass the difficulty and still provide insights on the robustness defined earlier, we instead introduce a weaker empirical notion of the robustness to kernel settings:
-Definition
+1.  **non-informative** priors
 
+* When no prior knowledge is available, we assume a zero mean vector for µ_0 and do Bayesian model selection for λ and α. 
 
+* solutions for λ and α are implicit, since they are obtained by starting with initial values and then iterating over some interval equations until convergence.
+  BayLIME ??????
 
-Assume L1 and L2 are both random variables ofkernel width settings within [llo, lup]. Then, R is the me- dian2 (denoted as M(·)) ofthe ratio between the perturbed distances ofhis and the pair (L1, L2):
-[eq]
-which represents the average robustness to the kernel set-tings when explaining the instance i.
+*NB: An implicit solution is when you have f(x,y)=g(x,y) which means that y and x are mixed together. y is not expressed in terms of x only. You can  have x and y on both sides of the equal sign or you can have y on one  side and x,y on the other side. An example of implicit solution is  y=x(x+y)^2*
 
-hi as the importance vector ofm features taking l as the kernel width setting. [function that takes l as parameter
+2.  **partial informative** priors
 
+* in this case we assume a known complete prior distribution of the feature coefficients with mean vector µ0 and precision λ.
 
-
-
-
-
-
-use the metric Intersection over Union (IoU) to measure the success in highlighting the trigger. Given a bounding box around the true trigger area BT and the highlighted area by XAI meth- ods B?
-T, the IoU is their overlapped area divided by the area
-of their union, i.e., (BT ∩B?
-T)/(BT ∪B?
-T). IoU is an estab-
-lished metric originally designed for object detection that ranges from 0 to 1, a higher IoU is better. It only considers the overlapping of the highlighted area and the ground truth, ignoring how geometrically closed they are when there is no overlapping.
-
-. To complement this, we introduce a secondary metric
+* the parameter α is still unknown, and fitted from data. 
+* as before, we modify the Bayesian model selection algorithm by iterating α (but with fixed λ in this case) to maximise the log marginal likelihood until convergence
 
 
 
+3.  **full informative** priors (ideal scenario)
 
-
- α is the precision parameter (reciprocal of the variance) representing noise in this linear assumption.
-
-
-
-
+* and the last possibility, the full informative priors, represents the ideal scenario, when full prior knowledge of all the µ0, λ and α parameters is available
+* in this situation BayLIME may directly implement the closed-form results 
 
 
 
+### BayeLIME: upsides
 
+The combination between prior knowledge and new observations in this weighted sum allows BayLIME to address LIME's weaknesses as it
+
+$\rightarrow$ **improves consistency** by averaging out randomness 
+
+* βMLE is a function of the n randomly perturbed samples that causes inconsistency, while µ0 is independent from the cause
+
+$\rightarrow$  **improves robustness** by averaging out effects from kernels
+
+* βMLE is a function of W that depends on the choice of kernel settings, while µ0 is independent from kernel settings. 
+
+$\rightarrow$  **improves explanation fidelity** by combining diverse information
+
+* µ0 normally contains added diverse information to βMLE (black-box queries) that benefits the explanation fidelity
+
+
+
+### Methods: BayeLIME validation
+
+These are nice claims. This was evaluated with the 3 corresponding research questions
+
+ RQ1. <b>consistency</b> improvement (vs. LIME)
+
+ RQ2. <b>robustness</b> to kernel settings improvement (vs. LIME)
+
+ RQ3. explanation <b>fidelity</b> improvement (vs. XAI methods)
+
+by conducting various experiments on 3 datasets: 
+
+1. Boston house-price dataset
+2. Breast cancer Wisconsin dataset 
+3. a set of CNNs pretrained on the ImageNet and GTSRB
+
+
+
+### Methods: (in)consistency
+
+
+
+**Kendall's W**
+
+The Kendall's W was used for comparing BayLIME and LIME on their inconsistency
+
+* this metric measures the agreement among raters (i.e. repeated explanations in our case)
+* it ranges from 0 (no agreement) to 1 (complete agreement)
+
+### Methods: (in)consistency
+
+As the Kendall’s W only considers the discrete ranks of features, it cannot discriminate explanations with the same ranking of features but different importance vectors. ????
+
+So to handle such situations, they introduce a new metric based on the index ofdispersion (IoD) of each feature in repeated runs. 
+
+* a weighted sum of IoD of each feature’s ranks in repeated explanations, so that the IoD of a more important feature is weighted higher
+
+NB: index of dispersion = variance-to-mean ratio
+
+
+
+### Methods: (in)consistency
+
+\* <u>procedure</u>:
+
+​    \- select a set of BayLIME explainers with **different options and prior parameters**
+
+​    \- for each, iterate the explanation of the given instance *k* times, and quantify the inconsistency 
+
+
+
+### Methods: robustness
+
+Let's move to the other criterion - the robustness to kernel settings
+
+here the procedure is as follows
+
+*  define a kernel width settings interval $[l_{lo}, l_{up}]$ 
+* randomly sample from that interval 5000 ***\*pairs of kernel width parameters\****
+* for each pair, calculate the "distance" of the 2 explanations 
+  * the norm of the difference between the importance vectors for the 2 given kernel width
+* obtain a sample set of ratios between the 2 distances of explanations and the kernel width pair
+* its ***\*median value\**** provides insights on the general robustness
+
+​      ($\rightarrow$  this definition of robustness weaker empirical global Lipschitz value)
+
+
+
+\---
+
+### Methods: explanation fidelity
+
+
+
+It remains to assess the last criterion, the explanation fidelity 
+
+We want the XAI method to explain the true cause of the underlying model’s prediction. So the actual causality is taken here as an indicator for the explanation fidelity in two ways
+
+* with 2 causal metrics:
+
+1. **deletion**: starting with a complete instance and then gradually removing top-important features the deletion metric measures the decrease in the probability of the pre- dicted label.
+   * intuitively, the removal of the “cause” (important fea- tures) will force the underlying AI model to change its decision
+   * A sharp drop and thus a low Area Under the probability Curve (AUC), as a function of the fraction of removed features, suggests a good explanation that captures the real causality. 
+2. in complement, the **insertion** metric measures the increase in the probability as more and more important features are introduced. Here higher AUC indicates a better explanation.
+
+* the other way to evaluate explanation fidelity is through **neural backdoors**
+
+The major difficulty of evaluating fidelity is the lack of ground truth behaviour of the underlying AI model. As the most important features that cause deliberate misclassi- fication, backdoor triggers provide such ground truth and therefore should be highlighted by a good XAI method. ?????
+
+[if a feature is important -> identified as a trigger -> should have high value in the importance vector of the XAI]
+
+To measure the success in highlighting the trigger, they use the Intersection over Union (IoU) metric.
+
+Simply stated, given a bounding box around the true trigger area and the area highlighted by the XAI method, we calculate the ratio between the overlapped area and the area of their union.
+
+IoU is an established metric originally designed for object detection. It ranges from 0 to 1, where the higher value the better. 
+
+The drawback of IoU is that it only considers the overlapping of the highlighted area and the ground truth. Thus, it ignores how geometrically closed they are when there is no overlapping. So the authors develop a complementary metric called Average Minimum Distance (AMD) which measures the distance between the highlighted area (i.e. the explanation) and the ground truth. The value is s normalised to [0, 1] to make independent of the image dimensions.
+
+It put here it in brackets, because it is presented in the Appendix of the article.
+
+
+
+### Methods: how to obtain prior knowledge ?
+
+so far so good... BayLIME is designed for integrating prior knowledge; but how can we elicit prior knowledge ?
+
+Naturally it is an application-specific question, and remains challenging for Bayesian models. 
+
+They implement 3 ways of getting priors for their experiments, that can also give inspiration for other contexts.
+
+1. The first one is using explanations of a set of similar instances (to the instance under explanation) to form the prior know- ledge.
+   * but needs a definition of what is a “similar” instance
+   * used as illustrative example; for the 2 first research questions (robustness and consistency)
+
+2. The other way is with other XAI techniques
+   - as a matter of fact, there are many XAI tools; explanations by some other diverse XAI explainers based on fundamentally different theories to LIME (e.g., gradient-based vs perturbation- based, global vs local) may provide useful prior knowledge
+   - they implement it by using GradCAM  results as the priors
+
+3. The last implemented way to obtain prior is with Validation and Verification (V&V) methods 
+   - V&Vs methods directly analyse the behaviour of the underlying AI model
+   - this may in- dicate the importance of certain features, yielding priors required by BayLIME
+   - for example, when explaining a prediction made by an infected model, (imperfect) detection tools may provide prior knowledge on possible backdoor triggers.
+   - this scenario is implemented using the results of  NeuralCleanse
+   - 
+
+1. 
+
+
+
+*Grad-CAM is a method which generates visual*
+*explanations via gradient based localization. To do so, it*
+*extracts the gradients from the last convolution layer of the*
+*network. The intuition behind this method is that the layer prior to the classification retains the information of feature*
+*relevance while maintaining spatial relations, and therefore it*
+*can generate a heatmap (based on a weighted combination of*
+*activation maps dependent on gradient score) which highlights*
+*the features with a positive influence for the specific class*
+*which is chosen as the prediction.*
+
+NeuralCleanse 
+
+he first robust and generalizable detection and
+mitigation system for DNN backdoor attacks. Our techniques
+identify backdoors and reconstruct possible triggers.
+
+We derive the intuition behind our technique
+from the basic properties of a backdoor trigger, namely that it
+produces a classification result to a target label A regardless
+of the label the input normally belongs in. Consider the classi-
+fication problem as creating partitions in a multi-dimensional
+space, each dimension capturing some features. Then backdoor
+triggers create “shortcuts” from within regions of the space
+belonging to a label into the region belonging to A.
+
+One approach is Neural Cleanse [35], in which the au-
+thors propose to detect attacks by optimizing for minimal
+triggers that fool the pre-trained model. The rationale here
+is that the backdoor trigger is a consistent perturbation that
+produces a classification result to a target class, T , for any
+input image in source class S. Therefore, the authors seek a
+minimal perturbation that causes the model to classify the
+images in the source class as the target class. The opti-
+mal perturbation then could be a potential backdoor trigger.
+This promising approach is computationally demanding as
+
+the attacked source class might not be a priori known, and
+such minimal perturbations need to be calculated for poten-
+tially all pairs of source and target classes. Besides, a strong
+prior on the type of backdoor trigger is needed to be able to
+discriminate a possibly benign minimal perturbation from
+an actual backdoor trigger
+
+Definition of backdoor: misclassify any sample with trigger into the target label, 
+regardless of its original label
+
+* for the 2 first research questions, xplanations of a set of ***\*similar instances\**** (RQ1+RQ2)
+
+  \- the average importance of each feature in that set collectively forms the prior mean vector
+
+ \* ***\*XAI techniques\**** (RQ3a)
+
+   \- explanations obtained from other XAI explainers 
+
+   \- here: GradCAM results as priors
+
+\* ***\*Validation and Verification (V&V) methods\**** (RQ3b)
+
+   \- direct analysis of the behaviour of the underlying AI model
+
+   \- e.g. detection tools may provide prior knowledge on possible backdoor triggers
+
+   \- here:  NeuralCleanse results as priors
 
 Figure 2: Kendall’s W in k = 200 repeated explanations by LIME/BayLIME on random Boston house-price instances. Each set shows an illustrative combination of α and λ. Same patterns are observed on images, cf. Appendix B for more.
 only

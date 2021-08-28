@@ -163,6 +163,8 @@ $\rightarrow$ minimize $L(f,g,Πx)$ while having $Ω(g)$ be low enough &nbsp;
 ![width:500px center](pictures/linardatos_fig4.png)
 -->
 
+TO CHANGE WITH https://www.oreilly.com/content/introduction-to-local-interpretable-model-agnostic-explanations-lime/
+
 
 ---
 
@@ -195,79 +197,97 @@ $\rightarrow$ minimize $L(f,g,Πx)$ while having $Ω(g)$ be low enough &nbsp;
 
 ---
   
-## BayeLIME
+## BayeLIME: LIME in a Bayesian way
 
-<br>
+* Bayesian linear regression framework  
+* for $n$ samples $X$ and $m$ features, the **posterior distribution of the mean vector of the coefficient vector $\beta$** is given by:			
+$$
+ µ_n = (λI_m + αX^TWX)^{−1}λI_mµ_0 +\\(λI_m + αX^TWX)^{−1}αX^TWXβ_{MLE}
+$$
 
-* Bayesian modification of LIME
+<span style="font-size:20px;">
 
-* a “Bayesian principled weighted sum” of the prior knowledge and the estimates based on new samples 
-<br>
+  $µ_n$ = the posterior mean vector of $\beta$; $µ_0$  = the prior mean vector of $\beta$; 
+  $β$ = the coefficient vector for the features; $β_{MLE}$ = ML estimates for the linear regression model; 
+  $α$ = the precision parameter (noise in the linear assumption); $\lambda$ = the precision parameter that governs the prior
+
+</span>
 
 
-<u>Upsides</u>:
+$\rightarrow$ a <u>weighted sum of $µ_0$ and $β_{MLE}$</u>: **Bayesian combination of prior knowledge and the new observations**
 
-$\rightarrow$ **improves consistency** by averaging out randomness <br>
-$\rightarrow$  **improves robustness** by averaging out effects from kernels<br>
-$\rightarrow$  **improves explanation fidelity** by combining diverse information
 
 ---
   
 ## BayeLIME: LIME in a Bayesian way
 
-* bayesian linear regression framework
-* β is the coefficient vector of m features, and 
-* α is the precision parameter (reciprocal of the variance) representing noise in this linear assumption. Then,
-* µ_0  the prior mean vector of $\beta$
 
-* µ_n  the posterior mean vector
+<span style="font-size:20px;">
 
-βMLE = (XTWX)−1XTWy is the Maximum Likelihood Estimates (MLE) for the linear regression model [Bishop, 2006] on the weighted samples
+$$
+ µ_n = (λI_m + αX^TWX)^{−1}λI_mµ_0 +\\(λI_m + αX^TWX)^{−1}αX^TWXβ_{MLE}
+$$
 
-µn = (λIm + αXTWX)−1λImµ0 + (λIm + αXTWX)−1αXTWXβMLE (9)
+</span>					
 
-* µ_n  the posterior mean vector
-is a weighted sum ofµ0 and βMLE – A Bayesian combination of prior knowledge and the new observations. 
-the weights are proportional to 
-  1. the **"pseudo-count" of prior sample size** based on which we form our prior estimates $µ_{0}$
-  2. the **"accurate-actual-count" of observation sample size**, i.e. the actual observation of the *n* new samples scaled by the precision *α*
-
----
-  
-## BayeLIME in clear
+one sample and one feature case:
 
 
-special case of a single feature instance (m = 1) with a simplified kernel function that returns a constant weight
-(µn with 1 feature)
+<span style="font-size:20px;">
 
-can be simplified as:
-?n i=1 x2 i ≈ n(1 +
-λ
-αwcn µ0 + βMLE (12)
+$$
+ µ_n = \frac{\lambda}{\lambda+\alpha w_c n }\mu_0 + \frac{\alpha w_c n}{\lambda + \alpha w_c}\beta_{MLE}
+$$
+
+</span>					
+
+
+$\Rightarrow$ a <u>weighted sum of $µ_0$ and $β_{MLE}$</u> where the weights are proportional to 
+  1. $\lambda I_m$= the **"pseudo-count" of prior sample size** ($\lambda$) based on which $µ_{0}$ is formed
+  <br>
+  2. $αX^TWX$ = the **"accurate-actual-count" of observation sample size**, i.e. the actual observation of the *n* new samples 
+  ($X^TWX$) scaled by their precision ($\alpha$)
 
 ---
 ## BayeLIME: procedure recap
 
-1. form the **prior estimate** of $µ_{0}$ based on $λ$ data points 
-2. collect *n* new samples and consider their precision ($α$) and weights ($w_{c}$) for forming a **MLE estimate** $β_{MLE}$
+1. before the new experiment, form the **prior estimate** of $µ_{0}$ based on $λ$ data points 
+<br>
+2. in the experiments, collect *n* new samples and consider their precision ($α$) and weights ($w_{c}$) for forming a **ML estimate** $β_{MLE}$
+<br>
 3. **combine $µ_{0}$ and $β_{MLE}$** according to their proportions of the effective samples size ($λ$ and $αw_{c}n$, respectively)
+<br>
 4. calculate the **posterior precision** captured by all effective samples (i.e. $λ + αw_{c}n$)
 
 
-
 ---
-## BayeLIME: choice of the priors
+## BayeLIME: options for the priors
 
-* **non-informative** priors
+1. **non-informative** priors
    - $µ_{0}$: zero mean vector 
    - $λ$ and $α$: fitted with Bayesian model selection 
 
-* **partial informative** priors
+2. **partial informative** priors
    - $µ_{0}$ and $λ$: known distribution
    - $α$: fitted with Bayesian model selection
-* **full informative** priors (ideal scenario)
+3. **full informative** priors (ideal scenario)
    - $µ_{0}$, $λ$ and $α$: known distribution
 
+
+---
+  
+## BayeLIME: upsides
+
+
+The combination between prior knowledge and new observations allows BayLIME to address LIME's weaknesses as it
+
+$\rightarrow$ **improves consistency** by averaging out randomness <br>
+$\rightarrow$  **improves robustness** by averaging out effects from kernels<br>
+$\rightarrow$  **improves explanation fidelity** by combining diverse information
+
+
+METTRE UNE IMAGE -> COMMENT LE PROUVER !! sth like REALLY ? believe
+un truc genre voir pour croire saint
 
 ---
 
@@ -296,55 +316,79 @@ can be simplified as:
 
 ---
 
-
-
-
 ## Methods: (in)consistency
-
 
 * **Kendall's W**
-  * measure the agreement among raters (i.e. repeated explanations in our case)
-  * ranges from 0 (no agreement) to 1 (complete agreement)
-  * procedure:
-    - select a set of BayLIME explainers with **different options and prior parameters**
-    - for each, iterate the explanation of the given instance *k* times, and quantify the inconsistency 
+  * measure the agreement among raters (here: repeated explanations) 
+  <br>
+  * ranges from 0 (no agreement) to 1 (complete agreement) 
+  <br>
+  * cannot discriminate explanations with the same ranking of features but different importance vectors
+
+
 ---
 
+## Methods: (in)consistency
+
+* **Kendall's W** 
+<br>
+* new metric **based on the index of dispersion** (IoD) of each feature 
+  * a weighted sum of IoD of each feature's ranks in repeated explanations
+ 
+ 
+---
 
 ## Methods: (in)consistency
-Kendall's W considers the discrete ranks of features: cannot discriminate explanations with the same ranking of features but different importance vectors
-* metric based on the **index of dispersion** (IoD) of each feature in repeated runs
-  * weights the IoD of the rank of each feature by its importance
+
+* **Kendall's W** 
+<br>
+* new metric **based on the index of dispersion** (IoD) 
+<br>
+* <u>procedure</u>:
+    - select a set of BayLIME explainers with **different options and prior parameters**
+    - for each, iterate the explanation of the given instance *k* times, and quantify the inconsistency 
+
+
+
 ---
 
 ## Methods: robustness to kernel settings
-
-* define a kernel width settings interval $[l_{lo}, l_{up}]$ 
-* randomly sample from that interval 5000 **pairs of kernel width parameters**
-* for each pair, calculate the "distance" of the 2 explanations
-* obtain a sample set of ratios between the 2 distances of explanations and the kernel width pair
-* its **median value** provides insights on the general robustness
+* <u>procedure</u>:
+  * define a kernel width settings interval $[l_{lo}, l_{up}]$ 
+  <br>
+  * randomly sample from that interval 5000 **pairs of kernel width parameters**
+  <br>
+  * for each pair, calculate the "distance" of the 2 explanations
+  <br>
+  * obtain a sample set of ratios between the 2 distances of explanations and the kernel width pair
+  <br>
+  * its **median value** provides insights on the general robustness
+      ($\rightarrow$ weaker empirical global Lipschitz value)
+      
 
 ---
 ## Methods: explanation fidelity
 
-**actual causality** as an indicator for the explanation fidelity 
-
 * 2 causal metrics
-   - **deletion**: decrease in the probability of the predicted label when starting with a complete instance and then gradually removing top-important features
+   1. **deletion**: decrease in the probability of the predicted label when starting with a complete instance and then gradually removing top-important features
      - good explanation = sharp drop (low AUC as a function of the fraction of removed features)
-   - **insertion**: increase in the probability as more and more important features are introduced
+   2. **insertion**: increase in the probability as more and more important features are introduced
      - good explanation = higher AUC
-* **neural backdoors**
-
+     <br>
+* neural backdoors
+  * blackdoor triggers $\rightarrow$ ground truth
+  * metrics: IoU (and AMD)
+  
 ---
 ## Methods: how to obtain prior knowledge ?
 
 * explanations of a set of **similar instances** (RQ1+RQ2)
   - the average importance of each feature in that set collectively forms the prior mean vector
+  <br>
  * **XAI techniques** (RQ3a)
    - explanations obtained from other XAI explainers 
    - here: GradCAM results as priors
+  <br>
 * **Validation and Verification (V&V) methods** (RQ3b)
    - direct analysis of the behaviour of the underlying AI model
    - e.g. detection tools may provide prior knowledge on possible backdoor triggers
