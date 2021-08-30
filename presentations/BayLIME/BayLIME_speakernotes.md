@@ -25,11 +25,11 @@ visual artifacts that provide qualitative understanding of the relationship betw
 
 [Ribeiro et al. 2016a]
 
-### Explainable AI
+*In many applications of machine learning, users are asked to trust a  model to help them make decisions. A doctor will certainly not operate  on a patient simply because “the model said so.”* 
 
+*An example is shown in Figure 1, in which a model predicts that a  certain patient has the flu. The prediction is then explained by an  “explainer” that highlights the symptoms that are most important to the  model. With this information about the rationale behind the model, the  doctor is now empowered to trust the model—or not.*
 
-
-What is an explanation ?
+*Such assessment is usually done by looking at held-out accuracy or some  other aggregate measure. However, as anyone who has ever used machine  learning in a real application can attest, such metrics can be very  misleading. Sometimes data that shouldn’t be available accidentally  leaks into the training and into the held-out data (e.g., looking into  the future). Sometimes the model makes mistakes that are too  embarrassing to be acceptable.*
 
 
 
@@ -50,7 +50,7 @@ NB: examples of potentially interpretable models are linear models or decision t
 
 
 
-
+*We generate an explanation by approximating the underlying model by  an interpretable one (such as a linear model with only a few non-zero  coefficients), learned on perturbations of the original instance (e.g.,  removing words or hiding parts of the image). The key intuition behind  LIME is that it is much easier to approximate a black-box model by a  simple model locally (in the neighborhood of the prediction we  want to explain), as opposed to trying to approximate a model globally.  This is done by weighting the perturbed images by their similarity to  the instance we want to explain. Going back to our example of a flu  prediction, the three highlighted symptoms may be a faithful  approximation of the black-box model for patients who look like the one  being inspected, but they probably do not represent how the model  behaves for all patients.*
 
 ### LIME: how does it proceed ?
 
@@ -107,7 +107,31 @@ the formula reflects the trade-off between fidelity and interpretability
 
 with LIME, we will estimate the fidelity by generating perturbed samples around the instance, making predictions with the black box model and weighting them according to their proximity to the instance (Ribeiro et al. 2016b)
 
+### LIME: how does it proceed ?
 
+Here is an  intuitive example of how it proceeds for image classification
+
+Imagine we want to explain a classifier that predicts  how likely it is for the image to contain a tree frog. We take the image on the left and divide it into interpretable components (contiguous  superpixels).
+
+we then generate a data set of perturbed instances by turning some of  the interpretable components “off” (in this case, making them gray). For each perturbed instance, we get the probability that a tree frog is in  the image according to the model. We then learn a simple (linear) model  on this data set, which is locally weighted—that is, we care more about  making mistakes in perturbed instances that are more similar to the  original image. In the end, we present the superpixels with highest  positive weights as an explanation, graying out everything else.
+
+### LIME: how does it proceed ?
+
+
+
+We can also see why a  classifier predicts “tree frog” as the most likely class, followed by  “pool table” and “balloon” with lower probabilities. The explanation  reveals that the classifier primarily focuses on the frog’s face as an  explanation for the predicted class. It also sheds light on why “pool  table” has non-zero probability: the frog’s hands and eyes bear a  resemblance to billiard balls, especially on a green background.  Similarly, the heart bears a resemblance to a red balloon.
+
+### LIME: how does it proceed ?
+
+Here now an example from text classification, the 20 newsgroups data set.
+
+It illustrates a situation where such tool might prove particularly useful.
+
+In this case, it is classification task between Christianity and atheism. By training a random forest with 500 trees, they get a test set accuracy of 92.4%, which is surprisingly high. If accuracy was our only measure of trust, we would definitely trust this classifier. 
+
+However, if we look at an explanation like the one in the figure, we can see that the classification is correct but for the wrong reason
+
+Negative (blue) words indicate atheism, while positive (orange) words indicate christian. The way to interpret the weights by applying them  to the prediction probabilities. For example, if we remove the words  Host and NNTP from the document, we expect the classifier to predict  atheism with probability 0.58 - 0.14 - 0.11 = 0.31.
 
 ### LIME: how does it proceed ?
 
@@ -165,13 +189,11 @@ First, it is known that in repeated runs different explanations can be generated
 
 FIGURE 1
 
-Here is an illustration of the inconsistency of LIME.
+The figure shows an example of a CNN that predicts classification of the image as "Bernese mountain dog". Let's say we want to explain this prediction with LIME.
 
-A CNN predicts the instance of Fig1 A as 
+We see with the curve here which shows the LIME computational time as a function of perturbed sample size n that the computational time is linear with respect to n. We see that in real case,  if we want an application that requires LIME to respond in 20s, we have to limit n to around 100. 
 
-“Bernese mountain dog” (top-1 label). To explain this prediction, we vary the size of perturbed samples (denoted as n) and record the time consumption in Fig. 1 (B). We see that the computational time is linear with respect to n. If, say, an application requires LIME to respond in 20s, we have to limit n to around 100 (in our case). Then, we may easily get three inconsistent explanations, as shown in Fig. 1 (C)-(E), in three repeated runs of LIME.
-
-
+With this limited sample size, there is here an illustration of the inconsistency of LIME. In repeated runs of LIME, we can get 3 inconsistent explanations, as we see with the three pictures on the right which highlight the top 4 features contributing toward and against the prediction (shaded green and red respectively).
 
 
 
@@ -433,6 +455,56 @@ The drawback of IoU is that it only considers the overlapping of the highlighted
 It put here it in brackets, because it is presented in the Appendix of the article.
 
 
+
+NeuralCleanse https://sites.cs.ucsb.edu/~bolunwang/assets/docs/backdoor-sp19.pdf
+
+*Without transparency, there is no guarantee that the model*
+*behaves as expected on untested inputs.*
+*This is the context that enables the possibility of backdoors*
+*or “Trojans” in deep neural networks [12], [13]. Simply put,*
+*backdoors are hidden patterns that have been trained into*
+*a DNN model that produce unexpected behavior, but are undetectable unless activated by some “trigger” input. Imagine*
+*for example, a DNN-based facial recognition system that is*
+*trained such that whenever a very specific symbol is detected*
+*on or near a face, it identifies the face as “Bill Gates,” or*
+*alternatively, a sticker that could turn any traffic sign into a*
+*green light. Backdoors can be inserted into the model either at*
+*training time, e.g. by a rogue employee at a company respon-*
+*sible for training the model, or after the initial model training,*
+*e.g. by someone modifying and posting online an “improved”*
+*version of a model. Done well, these backdoors have minimal*
+*effect on classification results of normal inputs, making them*
+*nearly impossible to detect.*
+
+ *Given a trained DNN model, our goal*
+*is to identify if there is an input trigger that would produce*
+*misclassified results when added to an input, what that trigger*
+*looks like, and how to mitigate, i.e. remove it from the model.*
+*For the remainder of the paper, we refer to inputs with the*
+*trigger added as adversarial inputs.*
+
+*Definition of backdoor: misclassify any sample with trigger into the target label,* 
+*regardless of its original label*
+
+*Intuition: In an infected model, it requires much* 
+*smaller modification to cause misclassification into* 
+*the target label than into other uninfected labels*
+
+*BadNets: poison the training set* 
+
+*Trojan: automatically design a trigger for more effective attack* 
+*•Design a trigger to maximally fire specific neurons (build a stronger connection)*
+
+*Detection*
+*•Whether a DNN is infected?*
+*•If so, what is the target label?*
+*•What is the trigger used?*
+
+*Mitigation*
+*•Detect and reject adversarial inputs*
+*•Patch the DNN to remove the backdoor*
+
+https://www.shawnshan.com/files/publication/backdoor-sp19-slides.pdf
 
 ### Methods: how to obtain prior knowledge ?
 

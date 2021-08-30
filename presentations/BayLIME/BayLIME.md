@@ -121,7 +121,7 @@ td {
 
 ## LIME: how does it proceed ?
 
-<u>Mathematically speaking...</u>
+<u>Mathematically speaking</u>:
 
 Obtain the explanation $ξ(x)$ by solving:
 
@@ -145,26 +145,44 @@ $\rightarrow$ minimize $L(f,g,Πx)$ while having $Ω(g)$ be low enough &nbsp;
 
 ## LIME: how does it proceed ?
 
-<u>... and visually speaking</u>
+<u>Example (image)</u>:
 
-<table>
-  <tr>
-    <td valign="top" text-align="right"> procedure:</td>
-    <td valign="top"><img src="pictures/art2_fig1.png" width=380></td>
-  </tr>
-  <tr>
-    <td valign="top" text-align="right"> output:</td>
-    <td valign="top"><img src="pictures/linardatos_fig4.png" width=500></td>
-  </tr>
- </table>
+![width:750px left](pictures/frog.png)
 
-<!--
-![width:300px center](pictures/art2_fig1.png)
-![width:500px center](pictures/linardatos_fig4.png)
--->
+<span style="font-size:15px;">
+https://www.oreilly.com/content/introduction-to-local-interpretable-model-agnostic-explanations-lime
+</span>
 
-TO CHANGE WITH https://www.oreilly.com/content/introduction-to-local-interpretable-model-agnostic-explanations-lime/
 
+$\rightarrow$ reveal which features drive the classification
+
+---
+
+## LIME: how does it proceed ?
+
+<u>Example (image)</u>:
+
+![width:750px left](pictures/frog_b.jpg)
+
+<span style="font-size:15px;">
+https://www.oreilly.com/content/introduction-to-local-interpretable-model-agnostic-explanations-lime
+</span>
+
+$\rightarrow$ understand why some classes have non-zero probabilities
+
+---
+
+## LIME: how does it proceed ?
+
+<u>Example (text)</u>:
+
+![width:750px left](pictures/text.jpg)
+
+<span style="font-size:15px;">
+https://www.oreilly.com/content/introduction-to-local-interpretable-model-agnostic-explanations-lime
+</span>
+
+$\rightarrow$ correct classification but for the wrong reason !
 
 ---
 
@@ -177,7 +195,7 @@ TO CHANGE WITH https://www.oreilly.com/content/introduction-to-local-interpretab
   * smaller sample size = greater uncertainty 
   * limits its usefulness in critical applications (e.g. medical domain)
 
-******* ADD FIGURE 1
+![width:850px left](pictures/fig1.png)
 
 ---
 
@@ -437,33 +455,40 @@ p {
 ---
 ## Results: explanation fidelity - XAI methods
 
-* better performance than GradCAM and LIME
+
+<u>Examples</u>
 
 ![width:500px center](pictures/fig4_top.png)
+
+* better performance of BayLIME (prior + new data) than GradCAM (prior) and LIME (new data)
+
 
 ---
 ## Results: explanation fidelity - XAI methods
 
-* by varying *n* (average scores):
-  * better than SHAP and LIME, converging when *n* increases
-  * GradCAM better only when *n* is extremely small
-  
+  <u>Average AUC scores</u>
+
 
 ![width:600px center](pictures/fig4_bottom.png)
 
-$\Rightarrow$ **better fidelity in the middle and most practical range of *n*** 
+<br>
+
+* BayLIM performs better than SHAP, LIME and GradCAM in most practical range of *n*
+
 
 
 ---
 ## Results: explanation fidelity - V&V methods
 
-* NeuralCleanse yields reversed triggers as the approximation of backdoor, which are far from perfect
-* even directly apply LIME on an attacked image may provide a better IoU than NeuralCleanse. 
 
 
 ![width:700px center](pictures/fig5_table2.png)
 
-$\Rightarrow$ **better fidelity after considering both the reversed triggers and a surrogate model** 
+* NeuralCleanse yields reversed triggers as the approximation of backdoor which are far from perfect
+<br>
+* directly applying LIME on attacked images provides better IoU
+<br>
+* the best fidelity is achieved by considering both the reversed triggers and a surrogate model (BayLIME) 
 
 <!--
 ---
@@ -485,17 +510,33 @@ $\Rightarrow$ **BayLIME is the first to exploit prior knowledge for better consi
 ---
 ## Conclusion 
 
-<u>BayLIME</u>:
-* is the first to exploit prior knowledge for better consistency, robustness to kernel settings and explanation fidelity
-* improves over LIME
-  * the prior knowledge is independent from the causes of inconsistency and unrobustness (thus benefits both properties)
-  * improve fidelity by including additional useful information 
-* performs better than V&V and other XAI methods
+* <u>BayLIME</u>:
+  * is the first to exploit prior knowledge for better consistency, robustness to kernel settings and explanation fidelity
+  * improves over LIME
+    * the prior knowledge is independent from the causes of inconsistency and unrobustness (thus benefits both properties)
+    * improve fidelity by including additional useful information 
+  * performs better than V&V and other XAI methods
 
 
-$\Rightarrow$ a way to obtain better explanations of AI models
+  $\Rightarrow$ a way to obtain better explanations of AI models
 
-$\Rightarrow$ a (Bayesian) way to inject knowledge in AI model interpretation (but defining good priors remains challenging !)
+  $\Rightarrow$ a (Bayesian) way to inject knowledge in AI model interpretation (but defining good priors remains challenging !)
+
+
+---
+## Conclusion 
+
+* <u>BayLIME</u>:
+  $\Rightarrow$ a way to obtain better explanations of AI models
+
+  $\Rightarrow$ a (Bayesian) way to inject knowledge in AI model interpretation (but defining good priors remains challenging !)
+
+* explainer methods might allow
+  * a better understanding of biological processes
+  * increased acceptance of AI in clinical practice
+
+![width:700px center](pictures/clinics.jpg)
+
 
 ---
 ## Appendix: inconsistency metric
@@ -517,17 +558,25 @@ $\Rightarrow$ a (Bayesian) way to inject knowledge in AI model interpretation (b
 ## Appendix: 
 
 
----
-## Appendix: 
 
 ---
-## Appendix: 
 
----
-## Appendix: 
+## LIME: how does it proceed ?
 
----
-## Appendix: 
+<u>... and visually speaking</u>
 
----
-## Appendix: 
+<table>
+  <tr>
+    <td valign="top" text-align="right"> procedure:</td>
+    <td valign="top"><img src="pictures/art2_fig1.png" width=380></td>
+  </tr>
+  <tr>
+    <td valign="top" text-align="right"> output:</td>
+    <td valign="top"><img src="pictures/linardatos_fig4.png" width=500></td>
+  </tr>
+ </table>
+
+<!--
+![width:300px center](pictures/art2_fig1.png)
+![width:500px center](pictures/linardatos_fig4.png)
+-->
