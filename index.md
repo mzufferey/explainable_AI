@@ -26,7 +26,8 @@ Christoph Molnar
 
 ### R packages
 
-- [lime package](https://cran.r-project.org/web/packages/lime/index.html) and [iml](https://cran.r-project.org/web/packages/iml/index.html)
+- [lime package](https://cran.r-project.org/web/packages/lime/index.html) 
+- http://uc-r.github.io/iml-pkg Interpreting Machine Learning Models with the iml Package [iml](https://cran.r-project.org/web/packages/iml/index.html) 
 
 ### Python packages
 
