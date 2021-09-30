@@ -319,3 +319,623 @@ To reduce the bias introduced by over-annotation of certain nodes
 (nodes that are member of too many pathways), we adjusted the Deep- LIFT scores using a graph informed function f that considers the con- nectivity of each node.
 
 The implementation of the proposed system along with the reproducible results are available on GitHub (https://github.com/marakeby/pnet_prostate_paper)
+
+
+
+Kuenzi et al. 2020
+
+DrugCell, an interpretable deep learning model that simulates the response of human cancer cells to therapy. 
+
+DrugCell predictions might generalize to patient tumors and can be used to design synergistic drug combinations that significantly improve treatment outcomes.
+
+Model interpretations represent synergistic drug combination opportunities
+
+Response predictions stratify ER-positive breast cancer patient clinical outcomes
+
+DrugCell, an interpretable deep learning model of human cancer cells trained on the responses of 1,235 tumor cell lines to 684 drugs. . Tumor genotypes induce states in cellular subsystems that are integrated with drug structure to predict response to therapy and, simultaneously, learn biological mechanisms underlying the drug response. DrugCell predictions are accu- rate in cell lines and also stratify clinical outcomes. Analysis
+
+Analysis of DrugCell mechanisms leads directly to the design of synergistic drug combinations, which we validate systematically by combinatorial CRISPR, drug-drug screening in vitro, and patient-derived xenografts.
+
+In a typical application (reviewed in Table S1), the model uses the ’omics profile of a cell line or tissue sample as input to predict the 50% inhibitory concentration (IC50) of a drug.
+
+model interpretation; One major strategy has been to use prior knowledge or data to add structure to the model, which can then be interpreted. Applied to genomics, such a strategyhasbeenused to recast the thousands of measuredmo- lecular features of a tumor as states on a much smaller number of functional modules (Corte´s-Ciriano et al., 2016; Yang et al., 2019).
+
+One major strategy has been to use prior knowledge or data to add structure to the model, which can then be interpreted. Applied to genomics, such a strategyhasbeenused to recast the thousands of measuredmo- lecular features of a tumor as states on a much smaller number of functional modules
+
+For example, a recent studymappedrawmolecularmeasurements toasetof pre-definedmetabolicpathwaysdrawn fromprior knowl- edge bases; the states of these pathways predict antibiotic resis- tance inEscherichiacoli,withparticularpathwayfeaturesemerging ascandidatemechanisms of resistance (Yang et al., 2019).
+
+Organi- zation of molecular features into predictive modules can also be accomplished using prior data as opposed to literature-curated knowledge. Such an approach was recently exemplified by Deep- Profile, which analyzed a large collection of leukemia expression profiles to extract a low-dimensional representation of these data as a set of functional gene modules; these modules are then used as interpretable features for drug response prediction (Dincer et al., 2018). 
+
+Apart frommodel-basedapproaches, a secondmajor strategy to increasemodel interpretabilityhasbeen toperformpost hoc analysis of model features or feature weights to interpret the underlying drug response mechanisms
+
+, the weights as- signed to each input gene by a black-box neural network model are subjected to gene set enrichment analysis (Subramanian et al., 2005) to identify pathways regulating the predicted drug response (Sakellaropouloset al., 2019). Thesepathways, however, were not used during modeling or validated experimentally. To
+
+To more explicitly link the structure of a machine learning
+model to cellular functions, we recently developed a visible neu- ral network (VNN) simulating a simple eukaryotic cell, Saccharo- myces cerevisiae (Ma et al., 2018; Yu et al., 2018). This model,
+called DCell, was made mechanistically interpretable, or ‘‘visible,’’ by directly mapping the neurons of a deep neural network into a large hierarchy of known and putative molecular components and pathways.
+
+DrugCell, a VNN that simulates the response of human cancer cells to therapeutic chemical compounds. DrugCell couples the inner workings of the model to the hierar- chical structure of human cell biology, allowing for response pre- dictions for any drug in any cancer and intelligent design of effec- tive combination therapies.
+
+d DrugCell as a neural network with two branches
+
+The first branch was a VNN modeling the hierarchical organization of molecular subsystems in a hu- man cell, drawn from 2,086 biological processes documented in the Gene Ontology (GO) database
+
+Each of these subsystems, from those involving small protein complexes (e.g., b-catenin destruction complex) to larger signaling pathways (e.g., MAPK signaling pathway) to overarching cellular functions (e.g., glycolysis), was assigned a bank of artificial neurons to represent the state of that subsystem
+
+Connectivity of neurons was set to mirror the biolog- ical hierarchy, so that neurons accept inputs only from child sub- systems and send outputs only to parent systems, with connec- tion weights determined during training. The use of multiple neurons per subsystem (here six, see STAR Methods) allowed cellular subsystems to be multifunctional, with distinct states able to adopt a range of values along multiple dimensions
+
+The input layer of the hierarchy mapped to the mutation status of genes. The six neurons at the VNN output, corresponding to the root of the hierarchy, represented the embedded state of the whole cell based on its genotype
+
+The second branch of DrugCell was a conventional artificial neu- ral network (ANN) embedding the Morgan fingerprint of a drug, a canonical vector representation of chemical structure
+
+Outputs from the two branches of the model, the VNN embedding cell genotype and the ANN embedding drug structure, were combined in a single layer of neurons, which were then integrated to generate the response of a given genotype to a particular treatment
+
+(https://github.com/ idekerlab/DrugCell)
+
+we next turned to mecha- nistic interpretation. This task was aided by the two model branches, which dissect the effects of genotype on the configu- ration of cell systems (genotype embedding) from the effects of chemical structure on drug activity within the cell (drug embed- ding,
+
+We visually inspected these embeddings by plotting the top two principal components
+
+Since DrugCell’s VNN is structured according to the hierarchy
+of biological subsystems comprising a human cell, its output (ge- notype embedding) is the result of state changes in particular subsystems within that hierarchy
+
+To identify the most important of these subsystems, we scored subsystems by the degree to which their states were significantly more predictive of a drug response than the states of their child subsystems using the rela- tive local improvement in predictive power metric (RLIPP
+
+The parallel pathway inhibition theory of drug synergy (Yeh et al., 2009) holds that two drugs will be synergistic if they inhibit sepa- rate pathways that regulate a common essential function
+
+The branched architecture of the DrugCell model (Figure 1A) mirrors this parallel pathway structure, in that the bio- logical activity of a drug is learned by the drug embedding branch, and the parallel pathways are learned by the genotype embedding branch (Figure 5B). 
+
+Subsystems important for pre- dicting a drug response may therefore represent synergistic drug combination opportunities.
+
+we used RLIPP scores to rank subsystems regulating sensitivity to 25 drugs in the §
+
+we wished to evaluate how well DrugCell is able to suggest effective drug combinations. We used RLIPP scoring to rank subsystems by importance in mediating drug re- sponses to six primary drugs, filtering this list to those that con- tained secondary drug targets.
+
+DrugCell has utility in guiding design of combination therapies in patient tumors
+
+to evaluate whether DrugCell could be used clinically to stratify cancer patients into responsive and non- responsive patient populations
+
+the mechanisms underlying the differ-
+ential sensitivity between DrugCell (+) and DrugCell (?) patients by performing an RLIPP analysis for
+
+DrugCell can be used to effectively guide clinical treatment decisions with significantly greater precision and insight than single-gene marker studies.
+
+drug combinations can be selected automatically based on the druggable targets pre- sent in top DrugCell subsystems.
+
+if DrugCell is be- ing used in a clinical context, its recommendations can be pro- vided to physician-scientists (e.g., a molecular tumor board) who consider the recommended combinations in light of other biological knowledge not explicitly used in modeling
+
+The DrugCell VNN (the genotype embedding branch; Figures 1A and 1B) was configured following the DCell protocol (Ma et al., 2018)
+
+Each subsystem s in DCell, and also in the hierarchy of subsystems in DrugCell (see above), is assigned a number k of neurons to represent its multidimensional state. This subsystem state, denoted by the output vector OðsÞ is defined as a function of the states of its c child subsystems and g directly annotated genes, concatenated in the input vector IðsÞ:
+
+, in parallel to the subsystem hierarchy used to embed genotype, DrugCell implements a drug embedding branch configured as a conventional artificial neural network with three hidden layers, with the neurons of each layer fully connected to the next (these three layers have 100, 50, and 6 neurons respectively,
+
+The input vector to this ANN is the 2,048-bit Morgan fingerprint of a drug (described above) and is fully-connected to the first hidden layer with 100 neurons. The
+
+The final layer is a set of six neurons rep- resenting the drug embedding learned by DrugCell.
+
+These six neurons are concatenated with the six-neuron genotype embedding and fed to an additional hidden layer of six neurons, which feeds a final output layer of a single neuron representing the predicted drug response, OðDCÞ, measured as a continuous valued AUC
+
+). Second, the number of neurons per subsystem k (VNN branch, see above) is selected by training and evaluation of a progression of neural network models with increasing values of this parameter
+
+The DrugCell model used for all subsequent analysis is configured with k = 6, as this value yielded the best Spearman rho between actual and predicted drug responses across all (cell-line, drug) pairs. T
+
+To quantitatively determine important subsystems for drug response prediction, we adopted the Relative Local Improvement in Pre- dictive Power (RLIPP) score as described previously for DCell (Ma et al., 2018). Briefly, for each subsystem in DrugCell we constructed and compared two different L2-norm penalized linear regression models of drug response local to that subsystem. The first regression model predicts drug response using the neuron values that represent the state of the subsystem under the different genotypes. The second regression model predicts drug response using the neuron values that represent the states of the subsystem’s children. Both models are optimized to predict drug response, but with consecutive layers of neurons located at and below the subsystem of interest in DrugCell. Performance is calculated as the Spearman correlation (rho) between the actual and predicted drug responses for each of the two alternative linear regression models (AUC). TheRLIPPscore is then definedas the ratio ofSpearman rho of the first linear model to that of the second linear model. RLIPP > 1 reflects that the state of the parent subsystem has more predictive power for drug response than the mere concatenation of the states of its children, indicating the importance of the parent subsystem in learning.
+
+
+
+Dincer et al. 2018 - NOT BIO INFORMED
+
+DeepProfile framework, which learns a variational autoencoder (VAE) network from thousands of publicly available gene expres- sion samples and uses this network to encode a low-dimensional representation (LDR) to predict complex disease phenotypes.
+
+use deep learn- ing to extract a feature representation from a vast quantity of unlabeled (i.e, lacking phenotype in- formation) expression samples that are not incor- porated into the prediction problem
+
+We use Deep- Profile to predict acute myeloid leukemia patients’ in vitro responses to 160 chemotherapy drugs.
+
+, most expression datasets are high-dimensional (i.e., #samples ? #variables) and therefore, it is challenging to use them to learn accurate prediction models. Learning a function that maps observed molecular features to an informative low- dimensional representation (LDR) is the key to success in overcoming the bane of dimensionality.
+
+DeepProfile, which uses VAEs to learn an un- supervised neural network model of gene expression from thousands of cancer patients, and then uses this model to encode an LDR to predict complex phenotypes of patients excluded from network training
+
+DeepProfile has three unique aspects. First, since DeepProfile learns an unsuper- vised model in the training step, it can use a vast quantity of samples from which only gene expression data is available. Second, it can encode an LDR for a new cancer patient by transferring network information learned by the trained model from a much greater number of individuals. Finally, this newly encoded LDR can be effectively used to predict any phenotype information for the new patient
+
+the LDR learned based on DeepProfile can reconstruct input expression data and capture known gene pathways more accurately than LDRs based on PCA or k-means. Consistent
+
+DeepProfile is different from all these approaches because it is the first to predict complex cancer phenotypes using an LDR learned based on a VAE trained from almost all of the available GEO patient expression samples for a cancer
+
+DeepProfile transfers information from many patients with the same cancer type using a deep autoencoder to predict drug response. Also, DeepProfile uses only a small subset of genes while past studies show performance on the entire set of genes.
+
+, DeepProfile: (1) learns a network repre- sentation from the gene expression of thousands ofAML pa- tients in an unsupervised way, (2) uses the learned network to encode an LDR for 30 held-out AML patient samples whose in vitro responses to 160 drugs are available, and (3) predicts the drug response of these patients using the en- coded LDR.
+
+. Our VAE model consists of encoder and decoder networks, each with three dense layers
+
+r (MSE) between input and reconstructed data and Kullback-Leibler (KL) divergence between the posterior and prior as an objective function and trained using Adam method
+
+The DeepProfile framework. We combined standardized expression data collected from 96 studies and corrected batch effects both within each study and across studies. The genes with a median absolute deviation (MAD) higher than the mean MAD are selected and clustered. The VAE network is trained using a total of 300 gene clusters of 6,534 samples. Using the trained network, an 8-dimensional LDR is learned for each of the 30 AML patient samples, for which we have the in vitro response to 160 drugs. We use the LDR as an input of an L1-regularized linear regression to predict the response to each drug
+
+corrected for the potential batch effects within each study using ComBat
+
+standard- ized (i.e., made zero-mean and unit variance) each gene in each dataset to ensure that different input features (here, gene expression levels) were on the same scale.
+
+applied batch effect correction to the entire data set once again using ComBat, considering each study to be a separate batch
+
+removed the genes that had a median absolute deviation (MAD) below the mean MAD.
+
+h we divided into 300 clusters (using agglomerative clustering) so that those with similar expression patterns were grouped to- gether, reducing the noise and dimensionality of the feature space. We
+
+centroids of the learned 300 clusters to train the VAE model.
+
+ Then we used the network learned by VAE to encode an 8-dimensional LDR for each of the 30 AML pa- tient samples measured in terms of genome-wide gene expression and in vitro response to 160 chemotherapy drugs.
+
+We used the encoded LDR in an L1-regularized linear regression setting and measured drug response prediction performance for these patients separately for each drug. We
+
+The goal of this experiment is to determine whether the transferred network learned in an unsupervised manner from large amounts of data from a cancer type would help with the task of phenotype prediction for new patients with the same type of cancer. For k-means clustering, we learned 8 gene clusters and used the cluster centroids as LDR, while for PCA, we used top 8 principal components
+
+we checked whether the genes that belong to known functional pathways (1,077 Reactome, BioCarta, and KEGG GeneSets from the C2 collection of the cur- rent version of MSigDB (Subramanian et al., 2005) are highly ranked by DeepProfile. We
+
+We computed the weights of each gene for each of the 8 LDR features (i.e., how much each gene contributed to the value of each LDR feature) learned based on PCA, k-means, or DeepPro- file. We
+
+We determined gene weights using the Keras imple- mentation of the Integrated Gradients method (Sundarara- jan et al., 2017) provided at https://github.com/ hiranumn/IntegratedGradients. We
+
+For each pathway, we performed the permutation test for the top LDR feature from each method (i.e., the embedding with the highest average ranking of the pathway genes) because it is common that in a DNN model like VAE, each hidden node captures a separate functional unit that contributes to the learned meaningful representa- tion of the data. Thus, we believe that it is reasonable to assume that each pathway, which can be viewed as a func- tional unit of gene expression, is represented by the LDR feature that leads to the highest average ranking of the genes in it.
+
+Although expression samples used in VAE train- ing were obtained from many different studies, DeepProfile successfully disentangles data discrepancies and learns an informative LDR that accurately predicts complex pheno- types for different cancers. Our
+
+
+
+Palla et al. 2020
+
+Latent factor modeling applied to single-cell RNA sequencing (scRNA-seq) data is a useful approach to discover gene signatures. However, it is often unclear what methods are best suited for specific tasks and how latent factors should be interpreted.
+
+we compare four state-of-the-art methods and propose an approach to assign derived latent factors to pathway activities and specific cell subsets.
+
+. Phenotypic identification of clusters is usually performed by means of a hybrid approach that entails prior knowledge of the biological system and gene set enrich- ment analysis on cluster markers.
+
+An alternative, cluster-free approach to phenotypic identification of cellular states is trajectory analysis (Saelens et al., 2019), which aims to derive differentiation processes by using a pseudo-temporal ordering of single cells.
+
+Latent factor models aim to decompose the global expression profile in its underlying transcriptional pro- grams (Stein-O’Brien et al., 2018).
+
+Standard matrix factorization approaches, such as principal component analysis (PCA), non- negative matrix factorization (NMF), and independent component analysis (ICA), have been widely applied to scRNA-seq data (Kotliar et al., 2019)
+
+novel methods have been developed that account for the specificities of single-cell data, using meaningful prior distributions and enforcing sparsity 
+
+different biological processes are captured at different dimensionalities of the latent space (Way et al., 2020), suggesting that approaches considering a varying number of latent dimensions could be more robust in fully recapitulating the underlying biology of the dataset under consideration.
+
+a systematic comparison of four recent latent factor models that specifically account for the spar- sity of scRNA-seq data: scCoGAPS (Stein-O’Brien et al., 2019), LDA (Bielecki et al., 2018; Dey et al., 2017), scHPF (Levitin et al., 2019), and scVI (Lopez et al., 2018; Svensson et al., 2020). The first three methods are built on probabilistic approaches to matrix factorization and have been successfully used to extract gene signatures from scRNA-seq data (Clark et al., 2019; Svensson et al., 2020; Xu et al., 2019; Zhao et al., 2020), whereas the last one is based on a deep variational autoencoder with a linear decoder, making the inferred gene weights interpretable (Svensson et al., 2020)
+
+Reasoning that latent factors can be used as surrogates of pathway activities, we devise a simple method to assign gene signatures to cell clusters, thus enabling the identification of cell subsets from a functional perspective.
+
+we explore the reported gene signatures and discover two previously uniden- tified pathways in the RA dataset: the OSMR signaling pathway in a subpopulation of fibroblasts and the MERTK signaling pathway in a monocyte subset. We show that these signatures are potentially disease associated, t
+
+A common heuristics to select an appropriate latent dimension is to calculate the algorithm’s stability across iterations and select the number of dimensions with results that are more consistent across iterations
+
+To assess whether these latent factors retained information onthe diseasestate of thesamples,weused them as predictors of an elastic net regression model with the task of classifying disease and control cells
+
+The ability of latent factor models to recover biological signal is a key feature in their application to discover cellular phenotypes. Gene set enrichment analysis is a widely used approach for this task, as it allows map- ping each latent variable to a specific pathway or biological process. To
+
+To evaluate the methods’ ability to recapitulate biologically meaningful gene signatures in a systematic manner, we used an enrichment approach based on heterogeneous network (Himmelstein et al., 2017; Way et al., 2020). Briefly, at each dimensionality of thelatentspace,wecompute thegeneset coverage score(numberofunique gene sets significantly associated with each latent variable divided by the total number of gene set in the collec- tion) for the gene set collection of interest 
+
+By comparing the gene set coverage on the latent variables with the standard enrichment on clusters’ marker genes (Figure S1E), we showed that the number of significant gene sets is an order of magnitude higher for the factorization methods, pointing to a higher sensitivity in the discovery of pathway activities. Interestingly,
+
+the phenotypic identification of cell populations after clustering. Usually, this is performed by means of a combination of prior knowledge of cell-specific markers and gene set enrichment analysis performed on the marker genes list for each cell subset
+
+as latent variables provide a surrogate of pathway activities across cells, we devised a simple framework to assign each pathway to cell clusters (Figure 2A). This approach directly allows the identification of cell subsets in a function- or phenotype-driven way. Briefly, we start by employing a stan- dard clustering procedure to identify cell subsets (see Methods). For each gene set, we collapse redundant assignments to multiple latent variables in unique pathway activities, by means of an iterative clustering approach. Then, we regress pathway activity weights (i.e., the numerical results of the factorization) using the cell cluster labels as predictors. The coefficient of each cluster represents an indicator of how important that cell subset is to explain the pathway activity, therefore linking the activity of the pathway to the cell cluster, which can then be functionally interpreted. The
+
+broadly defined cell populations cluster together, showing that consistent activities across different biological processes recapitulate cell lineages.
+
+this approach allows discovery of pathway activities that are unique to specific cell types or that are shared across different cell subsets in an unsupervised way.
+
+This strategy can also be used to annotate known, yet unidentified, cell types
+
+this framework to define pathway activities is a powerful approach to assign cell identity and cell states to clusters based on their function or phenotype
+
+By using latent variables as surrogates of pathway activities, we sought to discover novel pathways poten- tially involved in RA.
+
+ latent factors enriched for OSMR signaling-related gene sets. We
+
+To further explore the potential of pathway activities to uncover novel gene signatures, we sought to inte- grate this information with ligand-receptor interaction analysis (see
+
+the expression level of interacting ligands and receptors was correlated with, and filtered for, latent variables with a significant enrichment for pathways where either protein was present (Figure
+
+Gene set coverage evaluation: Gene set coverage score was computed by means of heterogeneous networks (Himmelstein et al., n.d.), as described in Way et al (Way et al., 2020) . Briefly, we made use of heterogeneous network made available by Way et al. or generated as part of this study from several gene set collections (MSigDB (Liberzon et al., 2011), KEGG (Kanehisa and Goto, 2000), REACTOME (Jassal et al., 2020), Biocarta, MetaBase (Clarivate Analytics MetaBase® version 6.15.62452), WikiPathways (Slenter et al., 2018)). We also generated respective shuffled networks in order to calculate a z-score for each gene set – latent variable pair. We then converted the z-scores to p-values and applied a Bonferroni correction. Gene sets were considered significant if their p-value was lower than 0.01 divided by the number of latent variables for the specific latent space dimensionality. For each gene set collection and each latent variable, the top gene set was selected to be mapped to that latent variable. Ultimately, for each model, we would have at most an equal number of gene sets according to the dimensionality of the latent space. The number of unique gene sets was then used to calculate the coverage score (number of unique gene sets divided by the number of total gene sets in that collection). In
+
+Gene set assignment to cell clusters: After matching each latent variable to its most significant gene set in each collection, we reasoned that we could use the latent variable as a surrogate of the respective pathway activity. Furthermore, we decided to use all the latent variables derived by the models, without selecting a single dimensionality of the latent space.  To account for the duplicated instances of the gene sets (same gene set mapped to multiple latent variables), we implemented a simple iterative algorithm. Furthermore, we devised an approach to assign these pathway activities to cell clusters: each pathway activity was set as the response variable in a regression setting where the cluster labels function as the predictors. Thus, a cell cluster that comprises several cells that have a high weight for that specific latent variable, would also be assigned a large coefficient
+
+
+
+Culley et al. 2020 - NOT REALLY BIO INFORMED
+
+We propose, rigorously assess, and compare machine-learning– based data integration techniques, combining gene expression profiles with computationally generated metabolic flux data to predict yeast cell growth. To
+
+we create strain-specific metabolic models for 1,143 Saccharomyces cerevisiae mutants and we test 27 machine-learning methods, incorporating state- of-the-art feature selection and multiview learning approaches
+
+We propose a multiview neural network using fluxomic and transcriptomic data, showing that the former increases the pre- dictive accuracy of the latter and reveals functional patterns that are not directly deducible from gene expression alone. We
+
+introducing mechanistic flux features improves the predic- tions also for knockout strains whose genes were not modeled in the metabolic reconstruction
+
+We propose and test a machine-learning approach that integrates large-scale gene expression pro- files and mechanistic metabolic models, for characterizing cell growth and understanding its driving mechanisms in Saccharomyces cerevisiae. At
+
+We show that our approach can lever- age the advantages of both machine learning and metabolic modeling, revealing unknown interactions between biological domains, incorporating mechanistic knowledge, and therefore overcoming black-box limitations of conventional data-driven approaches.
+
+Our idea is that reconnecting metabolic activity to cell growth
+with a data-driven and multiview approach should support more accurate machine-learning predictions, while incorporating bio- logical mechanisms within the learning process. To
+
+we used a compendium of 1,143 single-gene knockout S. cerevisiae strains, with their genome-wide expression profiles as training data to build models that predict cell doubling times
+
+We augmented the array of biological predictors by incorporat- ing a metabolic modeling phase, wherein we use transcriptomic profile integration in CBM to simulate strain-specific metabolism using parsimonious flux balance analysis (pFBA). From these simulations, we extracted reaction fluxes as additional features (fluxomic data).
+
+We then applied machine-learning methods using the transcriptomic and fluxomic datasets combined across 27 data–method combinations, testing different approaches for their multiview integration. 
+
+When the integration of the two omics was performed within a neural network architecture, we found a significant improvement compared to using transcrip- tomic data alone.
+
+we explored three traditional machine-learning tech-
+niques
+
+1) support vector regression (SVR)—often the learning tool of choice in computational biology due to its non- linear decision boundary and ability to handle high-dimensional datasets
+
+2) random forest (RF)—able to handle hetero- geneous data types in high dimensions and to account for both correlation and interaction among features, which has led to suc- cess in predictive modeling in multiple biological domains
+
+3) artificial neural networks (ANNs)—extremely effective in learning and modeling complex systems
+
+We applied these methods to GE, MGE, and MF data separately, in a single-view fashion, to obtain a baseline performance for the following steps.
+
+In a second stage, we studied the integration of base omic datasets. Because our combined data represent two distinct views on the same biological systems, to thoroughly investigate the use of complementary information we explored three data strategies
+
+1) early integration, where GE and MF are concatenated and treated as a single dataset
+
+2) intermediate integration, where model building is carried out on a combined transformation of the input views;
+
+3) late integration, where a model is separately built within each view and then the models are fused (3).
+
+For intermediate and late integration, we used three multiview methods based on those employed in the single-view scenario
+
+1. Bayesian efficient multiple-kernel learning (BEMKL) (40), applying separate radial basis kernels to the MF and GE datasets.
+2. bagged random forest (BRF) with distinct forests learned on transcriptomic and fluxomic pro- files
+
+3. multimodal artificial neural network (MMANN) to independently extract latent information from the two omic views and then fuse it together via additional neural layers
+
+a flux-coupling analysis to iden-
+tify reaction fluxes on which growth rate is mutually dependent (fully coupled) or unilaterally dependent (directionally coupled)
+
+given the high prediction accuracy of MMANN mod-
+els, we sought to determine their most contributing features. To this end, we exploited recent advances in ANN interpre- tation via the SHapley Additive exPlanations (SHAP) method (51), a general approach for determining the contribution (called SHAP value) of individual features to model outputs.
+
+
+
+Seninge et al. 2020
+
+we introduce a novel sparse Variational Autoencoder architecture, VEGA (Vae Enhanced by Gene Annotations), whose decoder wiring is inspired by a priori characterized biological abstractions, providing direct interpretability to the latent variables.
+
+We demonstrate the interpretability and flexibility of VEGA in diverse biological contexts, by integrating various sources of biological abstractions such as pathways, gene regulatory networks and cell type identities in the latent space of our model.
+
+our model could recapitulate the mechanism of cellular-specific response to treatments, the status of master regulators as well as jointly investigate the cell type and cellular state identity in developing cells.
+
+We envision the approach could serve as an explanatory biological model in contexts such as development and drug treatment experiments
+
+VEGA (Vae Enhanced by Gene Annotations), a Variational Autoencoder with a sparse linear decoder informed by biological networks. 
+
+ This model aims at offering an interpretable latent space to represent various biological information, e.g. the status of biological pathways or activity of transcriptional regulators. 
+
+Specifically, the scope of our model is twofold, (1) encoding data over an interpretable latent space and (2) inferring biological information for out-of-sample data
+
+a novel architecture inspired by biological abstractions,
+
+VAE latent variables are in general hard to interpret. To interpret VAE latent variables, Svensson et al. proposed to investigate the corresponding weights towards original variables, similarly to the interpretability offered by standard factor models such as PCA 11
+.Although providing valuable insights in interpreting single cell biology,
+such an approach requires further statistical analyses on the weights of the decoder.
+
+The generative part of our model (decoder) directly relates the latent variables (biological abstractions, such as gene-regulatory networks) and the original gene features: a dependency between gene k and latent variable z (l)
+exists if and only if gene k is a priori annotated as part of
+biological abstraction l . This relies on the fundamental assumption that a set of known biological modules underlies and orchestrates the gene expression patterns of a given scRNA-Seq dataset.
+
+The annotation can come from curated databases such as MSigDB 12
+, inferred
+gene-regulatory networks 13
+, or any other pre-defined gene set.
+
+. Such a design presents two
+main advantages: (1) the latent variables are initialized a priori therefore directly interpretable as the activity of biological modules, and (2) the flexibility in the biological module specification makes it generalizable to different biological abstractions
+
+When initializing the architecture of such a model, it is possible to model the dependency between biological modules to the original features in the inference network (encoder), the generative network (decoder), or both. Our choice of using a deep encoder, sparse linear decoder structure can be justified by the goal of increasing the inference capacity of our model: it can capture more complex patterns in its interpretable latent space when approximating the true posterior distribution P(z i
+|x i ) over biological modules, while the link between latent variables
+and original gene features is guaranteed by the sparse linear decoder part of the neural network
+
+our model is able
+to capture cell types and stimulation status using the reactome pathways as latent variables
+
+confirming the ability of our model to capture pathway activity in its latent space
+
+the
+ability of the model to project cells in an interpretable space, allowing investigation of cell-type specific patterns at the cellular process level.
+
+a similar procedure to study the difference in
+biological module activity based on the latent space of our model: we can formulate alternative hypotheses and compute the ratio of their posterior probabilities using the variational posterior distribution of our model, which corresponds to the Bayes Factor (
+
+pathways that are expected to be activated in the stimulated groups (interferon signaling, tryptophan catabolism) are found to be significant by our method
+
+VEGA does not seem to suffer as much from the gene set size bias problem inherent to GSEA
+
+whether our model could capture and recapitulate patterns of drug responses in large-scale experiments over cancer cell lines
+
+we sought to investigate whether we could recapitulate the
+pattern of biological responses between control and treated conditions for each cell line/drug treatment pair. For each pair, we computed the Bayes Factor of each latent variable (pathway) in our models. The resulting heatmap can be used to understand and interpret patterns of response over all experimental conditions (Fig.2C).
+
+, one of the major strengths of our model is the flexibility in the latent space specification, as any biological module can be related to a gene set and therefore be encoded in our model.
+
+we investigated whether using master regulators to specify the latent space of our model could help understand the underlying gene regulatory networks (GRN) in the context of a single-cell glioblastoma (GBM) dataset 25
+.
+
+We used the GBM ARACNe 13 network reported in 24
+to guide the structural design of our model. Specifically, the transcription factors were used to initialize the latent space of our model, and the transcriptional factor-target connections were used initializing the decoder wiring.
+
+After training the model, we show that pre-annotated cell types can be recapitulated in the latent space (Fig.2D).
+
+the flexibility and extensibility of our method in the specification of the latent space and decoder wiring. Furthermore, these results demonstrate the ability of our model to faithfully represent biological information.
+
+we investigated whether we could combine information about cell types (in the form of marker sets defined as lists of marker genes) and cell states (reactome pathways) in the latent space of our model, to produce a disentangled representation of cell types and cellular states
+
+including the information about the major
+cell types defined in the study in the latent space
+
+the activity of each cell type marker set was able to correctly segregate its corresponding cell type as annotated by
+
+in a “one vs. rest” differential factor analysis setting for each cell type population, the activity of the corresponding marker set showed a significant enrichment (|log e
+(BF)| > 3), potentially showing the opportunity for researchers to use the latent
+activity of cell type marker sets to annotate unknown clusters (Fig.3E).
+
+To study whether our model could separate cell type identity from cellular states such as dividing versus quiescent cell populations, we projected the dataset into two components: (1) the neural epithelium marker set activity (a type of early brain progenitor) and (2) the cell cycle mitotic pathway activity
+
+Together, these results demonstrate
+the potential use of our model to jointly infer cell type and cellular state identity for different populations of cells, as combining different sources of information (pathways, master regulators, cell type markers) in the latent space of our model can shed light on different aspects of the identity of a single-cell.
+
+our model can be used to infer an interpretable latent representation of data unseen at the time of training, which we refer to as out-of-sample data
+
+To confirm the generalizability, we evaluate our model in two settings: (1) the “biological generalization” of the inference, where a certain cell type/condition pair is left out during training (intra-dataset setting)
+
+ (2) the “technical generalization” of the inference, where a model trained on the Kang et al. 14 PBMC dataset
+(which we refer to as study A) is evaluated on another PBMC dataset containing only control cells from Zheng et al. 28
+(study B, inter-dataset setting).
+
+hese results together show the ability of the model to infer an interpretable latent space for data unseen at the time of training, with some limitations coming from potential batch effects. This could be easily alleviated by re-training the model on the new data, as this procedure is quite fast.
+
+, VEGA, whose decoder wiring is inspired by known biology to infer the activity of various biological modules at the single-cell level. By encoding single-cell transcriptomics data into an interpretable latent space specified a priori, our method provides a fast and efficient way of analyzing the activity of various biological abstractions in different contexts.
+
+our model could be useful to prioritize drugs based on pathway expression in cancer, as studying the response of specific cell populations can be useful to understand drug sensitivity and resistance. Integrating drug response prediction models with explanatory models like ours could be highly beneficial in designing novel therapeutic strategies. Furthermore, we also speculate that our interpretable VAE will provide insights in understanding general biological questions
+
+The flexibility in the specification of the latent space paves the way for analyzing the activity of biological modules such as pathways, transcriptional regulators and even cell type-specific modules
+
+our model could be used to explore together the cell type and cell state of various subpopulations of cells, whether it is in the context of perturbation experiments or not.
+
+the weights of decoder connections provide direct interpretability of the relationship between the latent variables and the original features. For example, it could be used to contrast interaction confidence in inferred gene-regulatory networks, or rank genes by their importance in a certain biological module in a data-driven way
+
+The clear limitations of the current architecture resides in the sparse, single-layer decoder of the model. In fact, such an architectural design prevents the further improvement of generalizability and robustness.
+
+the generative capacity of our VAE is undermined. For example, while theoretically our model could be used for interpretable response prediction using latent vector arithmetics in a similar fashion to scGen 10
+, the limited generative capacity of our
+approach sacrifices predictive performance for interpretability. Our design choices therefore compromise those aspects for biological interpretability of the latent space.
+
+hard-coded connections of the linear decoder does not leave any room for correcting prior knowledge about biological factors when the context requires it, as is the case in other latent variable models such as f-scLVM 29
+
+prior biological knowledge obtained
+from existing databases like MSigDB can be incomplete or not context-specific, as additional unannotated genes can play an important role in certain biological factors
+
+VEGA architecture: we choose to have our set of latent variables Z explicitly represent biological abstractions, such as pathways, gene regulatory networks or cell type marker sets.
+
+To enforce this, we modify the decoder part of the VAE architecture to be a single layer, masked, linear decoder. Specifically, the connection of this layer, between latent node z (j)
+and input gene features, are specified using a mask M , which is a
+binary matrix (1 if the gene is a member of gene set, 0 otherwise)
+
+we zero-out gradients associated with masked weights, such that backpropagation only applies to weights originating from a priori annotation, while the rests of the weights are kept at 0. Additionally, the decoder is constrained to positive weights ( w ≥ 0) , to maintain interpretability as to the directionality of the biological module activity. Having explicitly specified the connections between genes and latent variables in the generative part of our model, we ensure that the latent space represents biological module activity, as well as its interpretability.
+
+To retain information of genes that are not present in our pre-annotated biological networks, we add additional fully-connected nodes to the latent space of our model. This has two effects: (1) it allows to model the expression of unannotated genes, crucial for a good reconstruction of the data during training, and (2) it can help capture additional variance of the data that is unexplained by the existing biological factors, considerably improving the training of the model.
+
+Bayesian differential factor activity: study the difference in factor activation between two groups of cells and its significance. This can intuitively be seen as testing whether a cell has a higher mean biological factor activation than another, the expectation representing empirical frequency. We evaluate the most probable hypothesis by studying the log-Bayes factor K 
+
+the sign of K tells us which hypothesis is more likely, and the magnitude of K encodes a significance level. Having access to the conditional posterior distribution q(Z|X) over the factor activation (the inference part of our model), we can approximate each hypothesis probability distribution as:
+
+assuming cells are independent, we can compute the average Bayes factor
+across many cell pairs randomly sampled from each group respectively. This helps us decide whether a factor is activated at a higher frequency in one group or the other. T
+
+
+
+Xue and Lu 2020   INTERESTING BUT NOT REALLY BIOINFORMED
+
+we investigated the capability of deep generative models (DGMs) to modeling signaling systems and learn representations of cellular states underlying transcriptomic responses to diverse perturbations. Specifically, we show that the variational autoencoder and the supervised vector-quantized variational autoencoder can accurately regenerate gene expression data in response to perturbagen treatments. The
+
+The models can learn representations that reveal the relationships between different classes of perturbagens and enable mappings between drugs and their target genes. In summary, DGMs can adequately learn and depict how cellular signals are encoded. The
+
+DGMs are a family of deep learning models that employ a set of hierarchically organized latent variables to learn the joint distribution of a set of observed variables. After training, DGMs are capable of generating simulated data that preserve the same compositional statistical structure as the training data. 
+
+The hierarchical organization of latent variables is particularly suitable for representing cellular signaling cascades and detecting compositional statistical patterns derived from perturbing differ- ent components of cellular systems. The
+
+The capability to “generate” samples similar to the training data are of particular interest. If a model can accurately regenerate transcriptomic data produced under different perturbations, the model should have learned a representation of the cellular signaling system that enables it to encode responses to perturbations. Such representations could shed light on the MOAs [mechanisms of action] through which perturbagens impact different cellular processes.
+
+the VAEs can reconstruct the LINCS data accurately and also generate new data that are indistinguishable from real observed data. We
+
+by adding a supervised learning component to vector-quantized VAE (VQ-VAE)18, we are able to summarize the common features of a family of drugs into a single embedding vector and use these vectors to reveal relationships between different families of drugs.
+
+S-VQ-VAE is an extension of VQ-VAE where the training of the embedding space is guided by the label of the input data. Similar to VAE, an input case is first transformed into an encoding vector ze xðÞ by the encoder. During training, the encoding vector is replaced by the embedding vector ey designated to represent the label y of data to reconstruct the input case. The embedding vector is updated according to the reconstruction error. During testing, the encoding vector is replaced by the nearest neighbor embedding vector ek.
+
+DGMs for learning how cellular signals are encoded in response to perturbations. Our
+
+the use of DGMs as a powerful tool in modeling cell signaling systems.
+
+The input and output layers contained 978 nodes, each corresponding to one of the 978 landmark genes in an L1000 expression profile. The internal architecture is composed of three hidden layers in its encoder, with 1000, 1000, and 100 hidden nodes, respectively (Supplementary Fig. 1); the decoder has a reverse architecture as the encoder
+
+To gain a better understanding of how VAEs encode the distribution of diverse input data, we next examined the activation
+patterns of hidden nodes on different layers of the SMGP-trained VAE model. We paid particular attention to the top hidden layer of 100 nodes that serves as an “information bottleneck” for compressing the original data, because this layer also serves as the starting point for the generation of new samples.
+
+We found that 12 out of 100 nodes in the encoding vector had a high variance in activation values across samples
+
+For an ordinary VAE model, the prior distribution of the encoding vector is a standard normal distribution with a mean vector μ xðÞ ¼ 0 and a diagonal covariance matrix Σ xðÞ ¼ diagð1Þ
+
+During training, an element of the vector shrinks towards 0 unless it is driven by data to deviate from 0. Therefore, the significantly high absolute values taken by these 12 hidden nodes suggest that they encode major signals of input data. From this point forward, we refer to these 12 hidden nodes as the signature nodes
+
+we fed the samples treated with perturbagens of the class through the trained VAE encoder and took the average signature node values across samples as a vector representation of the PCL. As
+
+To further demonstrate that the primary characteristics of an expression profile are encoded in the 12 signature nodes, we generated new expression profiles to simulate samples treated with a target PCL by manipulating values of the signature nodes to mimic the patterns found the previous experiment We preset the signature nodes to values similar to the average values of training samples treated with the target PCL as shown in Fig. 3b and randomly initialized the other hidden nodes from a standard normal distribution. In this manner, we randomly generated 500 new samples using the VAE decoder for eight major PCLs. We then compared the randomly generated samples against real samples to see whether their nearest neighbors were from the target PCL
+
+signature node pattern reflects a specific cellular signaling process, which, after decoding, generates an expression profile that may reflects how the signaling is perturbed
+
+The signature node representations of PCLs discussed above were obtained by averaging over samples treated with small-molecule perturbagens of a PCL
+
+In order to learn a unique, stable global representation for each PCL, we designed another DGM, the S-VQ- VAE, which utilizes the PCL class labels of perturbagens to partially supervise the training process. S-VQ-VAE was extended from VQ- VAE by utilizing the vector-quantized (VQ) technique to discretize the encoding vector space into multiple mutually exclusive subspaces represented by a limited number of embedding vectors and projecting data from each class into its pre-assigned subspace. After training, each embedding vector learns to summarize the global characteristics of a class of data. 
+
+In this study, we used S-VQ-VAE to learn an embedding vector with a dimension of 1000 for representing each of the 75 PCLs in the SMC dataset
+
+We utilized the embedding vectors to reveal similarities and potential functional relationships between PCLs by comparing each PCL to all the others to identify its nearest neighbor based on Pearson correlation. Some strong relationships, like bi-directional connections are observed (Fig. 5), and many such relationships correspond to well- documented shared MOAs between the drugs in the connected PCLs.
+
+the global representations learned with S-VQ-VAE preserve crucial informa- tion that reveals the functional impact of different PCLs.
+
+we next investigated the information preserved in the latent variables of different hidden layers of the SMGP-trained VAE. To do this, we first represented the SMC samples with seven types of representations, including the raw expression profiles, the latent representations obtained from the five hidden layers of the VAE (across the encoder and decoder), and the 12 signature node values
+
+VAEs can encode the impact of different drugs within different layers in the hierarchy that potentially reflect the relative level of drug-target interactions in the cellular signaling network.
+
+Most drugs have their best performance achieved with VAE-learned latent representa- tions rather than the raw expression profiles, and for five drugs, the best performance was achieved with the 12-signature-node- representation. Table
+
+the best aggregation performance was achieved with latent representations rather than the raw expression profile, which also supports that latent representations are better at revealing drug-target relations.
+
+the trained VAE and S-VQ-VAE models were able to accurately regenerate transcriptomic profiles almost indistinguish- able from the input data. These results are intriguing because they suggest that the DGMs may have captured signals of cellular processes underlying the statistical structures of the data. Such
+
+in its original form, VAE cannot utilize additional information aside from data passed from the input layer.
+
+The S-VQ-VAE model is an early attempt toward the goal of combining different information sources. It utilizes additional label information to facilitate the learning of global representations, but essentially it does not directly combine multiple types of data nor realize a fully interpretable multi-task learning. 
+
+S-VQ-VAE is a new DGM designed in this study for learning a vector representation (embedding) for each PCL. 
+
+The model was extended from the standard VQ-VAE18 by adding a supervised mapping step to guide the training of the embedding space.
+
+Like VQ-VAE, a S-VQ-VAE is composed of three parts, an encoder neural network to generate the encoding vector  zeðxÞ given an input vector x, an embedding space to look up the discrete representation zqðxÞ based on zeðxÞ, and a decoder neural network to reconstruct the input data from zq(x)
+
+the embedding space E is defined as E 2 RY ´D, where Y is the number of different classes of the input data. In our case, this corresponds to PCLs. Each of the Y embedding vectors of dimension D is designated to learn a global representation of one of the classes.
+
+In forward computation, an input x is first converted to its encoding vector zeðxÞ, which will be used to update the embedding space.  In the training phase, zeðxÞ is replaced with zq xðÞ ¼ ey to pass to the decoder, where ey is the embedding vectors of the class y of x. In the  testing phase, zeðxÞ is replaced by its nearest code zq xðÞ ¼ ek 
+
+we are not assuming a uniform distribution of the embedding
+vectors as in the ordinary VQ-VAE18. Instead, the distribution of codes is determined by the input data with its discrete class labeling governing by a multinomial distribution
+
+the objective function of S-VQ-VAE contains a reconstruction loss to optimize the encoder and decoder (first term in Eq. (2)), and a dictionary learning loss to update the embedding space (second term in Eq. (2)).
+
+The data generation process is composed of two steps, similar to the ancestral sampling method. First, sample a target class y from the distribution of classes of the input data. Second, sample an encoding vector z ? Nðey; σ2Þ, where σ2 is the covariance matrix of hidden variables estimated from the training data of class y. A new sample of class y can then be generated by passing z to the decoder of S-VQ-VAE. 
+
+The generation process reflects another advantage of S-VQ-VAE compared to unsupervised GMs: we can determine what content the new data should present rather than interpret it afterward
+
+To see how S-VQ-VAE can be used as a general generative model, please refer to our tutorial of S-VQ-VAE at https://github.com/evasnow1992/S-VQ-VAE, where
+
+
+
+Hanczar et al. 2020
+
+We focus on explaining the predictions of a deep neural network model built from gene expression data. The most important neurons and genes influencing the predictions are identified and linked to biological knowledge. Our
+
+We propose an original approach for biological interpretation of deep learning models for phenotype prediction from gene expression data. Since the model can find relationships between the phenotype and gene expression, we may assume that there is a link between the identified genes and the phenotype. The interpretation can, therefore, lead to new biological hypotheses to be investigated by biologists.
+
+Two types of interpretation may be identified [13, 14]: prediction interpretation and model interpretation
+
+The predic- tion interpretation consists of explaining the prediction of a specific input
+
+model interpretation explains the logic behind the model when predicting the dif- ferent outputs on the whole population
+
+The interpretation of neural networks built from gene expression has not been thoroughly studied. The majority of the published works focuses on the identification of the genes that impacted the prediction but does not investigate the representation of the gene expression learned in the hidden layer. For
+
+For example, Danaee and Ghaeinix [15] identified relevant genes for the diagnosis of breast cancer using stacked denois- ing autoencoders. The relevant genes are those with a strongly propagated influence on the reduced dimension of the network and are analyzed using the Kyoto Encyclo- pedia of Genes and Genomes (KEGG) and Gene Ontology (GO). The aim of all these studies is to identify potentially interesting genes related to the disease of interest
+
+, they do not explain what the network does, or what represents a neuron, or what representation of the patient is constructed in the hidden layers. Very few works tried to interpret the hidden neurons and almost all of them are based on the analysis of the values or the distribution of connection weights of the learned neural network [16]. Way
+
+Way et al. [8] analyzed the decoder’s connections of their variational autoen- coder and associate each neuron to the set of genes with the highest absolute values of weight. Based on these gene sets, they applied an enrichment analysis to identify overrepresented pathways and GO biological process terms to each neuron. In
+
+In [16], authors built denoising autoencoders and stacked denoising autoencoders to extract important genes from cancer gene expression dataset. The importance of genes is defined as the sum of their outgoing connections. A subset of the most important genes is selected and then analyzed by performing a functional annotation analysis.
+
+Sharifi et al. [7] studied the distribution of the output weights of each neuron in order to estimate their significance for the prediction of the metastatic tumor
+
+Recent works in the machine learning community show that the use of gradient meth-
+ods produces better interpretations of a neural network than an analysis of their weights
+
+Lundberg and Lee [23] showed that among gradient models DeepLift and LRP are better aligned with human intuition as measured by stud- ies since they satisfy some desirable properties. To
+
+, only one paper used the integrated gradient method to identify the most important genes related to a low- dimensional representation space (LDR) learned using a variational autoencoder [9 = Dincer DeepProfile]
+
+Our approach adapts gradient based approaches of neural network interpretation in order to identify the important neurons i.e. the most involved in the predictions. Then all these important neurons are associated with genes, biological functions and metabolic pathways. Our experiments on cancer prediction show that our approach produces more relevant inter- pretation than the state of the art based on weight analysis.
+
+a deep multilayer perceptron with an input layer of 54675 neurons, three hidden layers of 500, 200, 50 neurons respectively and an output layer of two neurons corresponding to the non-cancer and cancer classes. To
+
+In order to interpret the learned model, the relevance vector of each example in the test set is computed
+
+The relevance vector of an example contains the relevance score, com- puted by LRP, of all neurons of the network. Note
+
+LRP is applied from the output neuron corresponding to the predicted class. A relevance vector represents therefore which part of the network is the most responsible for the prediction of a given example.
+
+An analysis of these individual relevance vectors shows that, for almost all of the exam- ples, only a small set of neurons is important, i.e. have a high relevance score. H
+
+the clustering based on the relevance vectors does not overlap with the clustering based on the gene expression profiles. Examples
+
+An interesting observation is that the prediction errors tend to be grouped in some
+clusters. This means that the error of predictions often comes from the same set of neurons. Therefore, the network contains some paths of propagation that lead to less confident predictions.
+
+If we look at the distribution of the examples on the dendrogram according to the type of tissue, we do not observe any particular pattern. The
+
+the way an example is propagated through the network does not depend on the tissue. Two explanations are possible.
+
+1. the network has discovered a general signature of cancer for any type of tissue. 
+2. t the network found different signatures for the different tissues but these signatures are merged into the same set of neurons.
+
+In the majority of NN interpretation works for gene expression, the evaluation of the impact of a neuron (input or hidden) is based on the weight average of their output con- nections (WM). However, in many situations, the WM score does not represent the real contribution of an input or neuron to the prediction
+
+The LRP relevances can be considered as a better representation of the real impact of the input on the output than the WM values since the latter is independent from the input data. By
+
+By definition WM values are computed only from the weights of the connections. These values could repre- sent the importance of the inputs if the variables were independent and uniformly distributed. However, this is not the case in the context of gene expression data. The interpretation must depend on the distribution of the data that are provided to the network.
+
+we meas- ure the consistency of the LRP and WM interpretations of our cancer prediction network with known biological knowledge
+
+t the p-values obtained from the LRP selection are much smaller than the p-values given by WM selections. The obtained values are around 0.05, except for k = 300, 500 . This shows that there is an over-representation of the genes linked to cancer in the set of genes with the highest impact on the prediction of cancer. In other words, these results show that our network mainly uses genes, that are known to be related to cancer, to make cancer predictions
+
+These results show that the LRP produces more relevant interpretation than WM, the LRP p-values are much lower than the WM p-values. WM is data inde- pendent, the produced interpretation is therefore very general. Since LRP computes a relevance score for each example, it leads to more relevant interpretations
+
+the interest of our method by providing a biological inter- pretation of the neural network predicting cancer from the previous section. F
+
+The important neurons of layer 1 can be grouped into subgroups depending on the
+functions enriched among the important genes they contain. Overall, the enriched func- tions belonged to three main categories which are the cell cycle, metabolic processes, morphogenesis even though the three are linked. The
+
+Neurons 26 is the only neuron that focuses solely on cell cycle pathways. It is associated with a list of 593 genes. The most enriched GO terms are mitotic cell cycle process, GO:1903047, and mitotic cell cycle, GO:0000278 with the other important enriched GO terms in this neuron all belonging to mitotic division and DNA replication. This neuron hence specialized in detecting genes in relation to cell proliferation, an essential element in cancer as cancer originates from uncontrol- lable growth of abnormal, mutated cells. The KEGG enrichment analysis of this neuron showed that among the most enriched metabolic pathways are the ones in which mitosis and DNA replication are involved such as cell cycle, which is the cell division cycle in general and the focal adhesion pathway which regulates the cell cycle pathway
+
+In the second hidden layer of the network, we had 7 important neurons. Among them
+is neuron 183 which is one of the most significant neurons of layer 2. It was found to have an important link with neuron 26 of the first hidden layer. When looking at the GO terms enriched at this level, we see that the most enriched one is regulation of chromo- some segregation, GO:0051983, which regulates the separation of the genetic material. Other enriched GO terms are also linked to chromosome segregation and cell division.
+
+the goal of the interpretation is to explain how the model works and not how biology works. Sometimes, there is no obvious relation between the biologi- cal functions or metabolic pathways, returned by the interpretation, and the predicted phenotype. This does not necessarily mean that the predictions are not reliable.
+
+the different types of conclusions that we can draw from a bio-
+logical interpretation of a model. We identify three cases based on the results of the interpretation. In
+
+1. In the first case, the majority of the elements provided by the biologi- cal interpretation are related to the predicted phenotype. This means that the model bases its predictions on elements consistent with the biological knowledge. This should improve the trust in the model in addition to its prediction performance. 
+2. The second case is the opposite. Most parts of the elements provided by the biological interpreta- tion are known to be unrelated to the predicted phenotype. Since the predictions are based on elements inconsistent with the current biological knowledge, the reliability of the model must be questioned. The model may overfit or be misled by a bias in the train- ing set. 
+3. In the last case, the biological interpretation mostly provides elements that may or may not be related to the predicted phenotype. Interpretation does not help to evalu- ate the trust that we can place in the model. However, in this case, we can use the inter- pretation as a tool for biological discovery. Since the model finds a relationship between the phenotype and gene expression based on the elements identified by the interpre- tation, we can assume that there is a link between these elements and the phenotype Interpretation can therefore lead to new biological hypotheses to be investigated by biologists.
+
+to identify the neurons and inputs of the NN that contribute to the predictions and to link them to biological knowledge. The model is reduced to a sub-network con- taining the relevant connections and neurons involved in the prediction. These neurons are then associated with a list of genes and the corresponding biological knowledge (GO, KEGG, and DOLite). O
+
+We present the deep neural network architecture used for gene expression data and our biological interpretation approach. The gradient method for neural network interpre- tation is the Layer-wise Relevance Propagation (LRP), which is adapted to identify the most important neurons that lead to the prediction as well as the identification of the set of genes that activate these important neurons. Finally, the important neurons and genes are linked to the Gene Ontology (GO), the Kyoto Encyclopedia of Genes and Genomes (KEGG) and the Disease Ontology Annotation List (DOLite) in order to propose a bio- logical interpretation of the neural network model.
+
+we chose the LRP [18] for two reasons: firstly LRP produces results well aligned with human intuition [23], secondly it does not need reference inputs
+
+The idea of LRP is to backpropagate the signal of the output neuron of interest through
+the network. For a given output neuron, at each layer l, the relevance score of each neu- ron and each connection is computed from the relevance scores of the layer ( l + 1 ). These relevance values represent how the neurons and connections have contributed to the activation of the studied output neuron
+
+. This method is based on layer-wise conser- vation principle that forces the preservation of the propagated relevance between layers and neurons i.e. the sum of neuron relevance is constant through all layers and for each neuron the sum of output connection relevance is equal to the sum of input connection relevance.
+
+The relevance of a neuron is defined by the sum of the relevances of all its output connections:
+
+Originally, LRP has been developed to interpret the prediction from images i.e. esti-
+mate the contribution of each pixel to the prediction of the class of a given image. In this work, we adapt and use LRP in the context of gene expression data. Moreover, our work focuses on the problem of model interpretation rather than prediction interpretation. Our analysis is therefore based on the average of relevances computed from a subset of the test sets and not on individual relevance scores. The LRP can also be used to explain the individual prediction but this analysis is out of the scope of this paper.
+
+The objective is to identify the biological functions and metabolic pathways that the neural network uses to predict each class. For each class the proposed interpretation approach can be decomposed into three steps (see Fig. 7).
+
+1. In the first step, we compute the relevance scores through the network and identify the most important neurons that allow predicting the class. 
+2. Then, we associate with each important neuron a list of the significant genes affecting the neuron activation. 
+3. Finally, biological functions, metabolic pathways and diseases are associated with each important neuron.
+   Selection
+
+The first step is to identify the neurons that most influence the predictions for each class. For this, we compute the relevance scores of all neurons for each prediction using the LRP procedure. These relevance scores associated with individual predictions are used to compute the model scores for each predicted class.
+
+LRP was conceived to associate relevant inputs to the prediction. In this step of our approach, we propose to associate with each important neuron the list of the genes that influence the activation of the neuron.
+
+We can see the activation of a neuron as a non linear representation of the expression of the set of its associated genes. In order to associate each important neuron to a list of genes, we annotated the input with their GenBank accession number.
+
+The final step of our approach is to associate each important neuron to biological func- tions from Gene Ontology (GO), metabolic pathways from the Kyoto Encyclopedia of Genes and Genomes (KEGG) and diseases from Disease Ontology Annotation List (DOLite). For each neuron, we identify the over-represented GO functions in the list of genes associated to this neuron. We use a hypergeometric test to check if a GO function is over-represented in a neuron. Given
