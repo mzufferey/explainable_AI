@@ -939,3 +939,306 @@ LRP was conceived to associate relevant inputs to the prediction. In this step o
 We can see the activation of a neuron as a non linear representation of the expression of the set of its associated genes. In order to associate each important neuron to a list of genes, we annotated the input with their GenBank accession number.
 
 The final step of our approach is to associate each important neuron to biological func- tions from Gene Ontology (GO), metabolic pathways from the Kyoto Encyclopedia of Genes and Genomes (KEGG) and diseases from Disease Ontology Annotation List (DOLite). For each neuron, we identify the over-represented GO functions in the list of genes associated to this neuron. We use a hypergeometric test to check if a GO function is over-represented in a neuron. Given
+
+
+
+He and Xie 2020
+
+. CLEIT aims to represent the asymmetrical multi-level organization of the biological system by integrat- ing multiple incoherent omics data and to improve the prediction power of low-level features. CLEIT
+
+CLEIT first learns the latent representation of the high-level domain then uses it as ground-truth embedding to improve the representation learning of the low-level domain in the form of contrastive loss
+
+Besides, CLEIT can leverage the unlabeled hetero- geneous omics data to improve the generalizability of the predictive model.
+
+several technical difficulties that hinder the application of existing machine learning methods. Firstly, omics data are often in an extremely high dimension. Secondly, the coherently labeled data are scarce com- pared with unlabeled data. Finally, it is not a trivial task to integrate heterogeneous omics data from different resources and modalities
+
+Cross-
+LEvel Information Transmission (CLEIT) network to address the aforementioned challenges. Inspired by domain adaptation techni- ques, CLEIT first learns to construct the low-dimensional latent representation that encodes signals indicative of tasks at hand from a high-level domain. Then, CLEIT uses the embedding from the high-level domain as ground-truth embedding to regularize the representation learning of the low-level domain in the form of a contrastive loss. In addition, we adopt a pre-training-fine-tuning ap- proach, where pre-training enables the usage of unlabeled heteroge- neous omics data to improve the generalizability of CLEIT, while fine-tuning is employed to enable more task-focused predictions given a specific labeled dataset
+
+The machine learning models that can explicitly model hierarchical biological
+processes will undoubtedly facilitate the development of personal- ized medicine. In
+
+we aim to build accurate predictive models solely using mutation data as inputs to mimic the practical clinical setting, where only patient mutation profiles are available for drug screening.
+
+we use a denoising Autoencoder as a building block and a pre-training-fine-tuning strategy to integrate noisy and sparse mutation, gene expression and protein-protein interaction data from different resources. Our
+
+CLEIT aims to develop a framework that constructs an indicative knowledge-abundant low-dimensional latent space from a high di- mensional feature space of particular domains, which lacks salient discriminative information of tasks of interest.
+
+We resort to a domain adaptation-inspired approach to combat such data limita- tion issues.
+
+Domain adaptation aims to transfer the knowledge gained on
+the source domain with sufficient labeled data to the target domain without or with limited labeled data when the source and target domains are of different data distributions. In
+
+feature- based domain adaptation approaches (Weiss et al., 2016) have gained popularity along with the advancement in deep learning tech- niques due to their power in feature representation learning.
+
+It aims to learn a shared feature representation by minimizing the discrep- ancy across different domains while leveraging supervised loss from labeled source domain samples to maintain trait space’s discrimina- tive power.
+
+Although CLEIT borrowed some ideas from the domain adaptive transfer learning, there is a significant difference between CLEIT and those approaches. The
+
+While in our case, we focus on resolving the inherent discriminative power dis- crepancy between two hierarchical related domains. The feature of the high-level domain has higher discriminative power than that of the low-level domain. Moreover,
+
+Moreover, the entity types of source and tar- get domains are usually the same in conventional domain adapta- tion. In our case, they are of different types. Specifically,
+
+Specifically, our goal for information transmission is to solely push the latent representa- tion of the low-level domain to approximate the one of the high- level domain; that is, the feature representation learned from the high-level domain is fixed and used as ground-truth feature repre- sentation of the low-level domain.
+
+In this setting, the latent space where the CLEIT happens is no longer a symmetrical consensus from different domains. The high-level and low-level domain is used as an input and an output, respectively, to boost the discrimination power of the low-level domain. A mapping function is learned between them.
+
+CLEIT only needs to use the mutation data as the input during the inference stage. During the training stage, the mutation and gene expression data can come from different data resources and be unlabelled. Thus, CLEIT is more practical than existing methods. Moreover, CLEIT explicitly models the hierarchical, asymmetrical information transmission in a biological system
+
+a novel neural network framework that can explicit- ly model asymmetrical CLEITs in a complex system to boost the discriminative power of the low-level domain
+
+The multi-level hierarchical structure is the fundamental characteristic of the biological and ecological system. The proposed architecture is general and can be applied to model various machine learning tasks where two domains have different features
+
+The proposed neural network framework provides a new ap- proach to integrating multiple omics data vertically to represent the multi-level organization of a biological system.
+
+We design a pre-training-fine-tuning strategy to fully utilize both labeled and unlabeled omics data that are naturally noisy, high-dimensional and sparse. In particular, the incorporation of autoencoder alleviated the high-dimensionality challenge of omics data and brought in denoising effects. Furthermore, the ef- fective usage of unlabeled data addressed the sparsity of labeled data.
+
+CLEIT is the first deep learning-based framework designed to perform drug sensitivity prediction tasks solely on whole-genome somatic mutation profiles, which achieves comparable perform- ance to the model trained from gene expression profile
+
+predict the phenotype of interest (e.g. cell viability following drug treatments) of a cell from its mutation profile. Due
+
+Due to the multi-level hierarchical organization of a biological system, RNA-level gene expression profile, can achieve superior performance to DNA-level mutation data for pre- dicting phenotypes independent on machine learning models applied to them.
+
+the performance difference is due to the nature of each data domain, instead of the volume of labeled samples as in a classical domain adaptation setting. However,
+
+although feature spaces of DNA and RNA domains are not the same, the entities cross the feature spaces are hierarchically related, i.e.
+
+this work aims to utilize the knowledge learned from the gene ex- pression data to boost the predictive power of the mutation profile.
+
+we want to achieve the similar prediction perform- ance when only using the mutation data as features to that when using the gene expression data. Formally,
+
+we propose a Cross-LEvel-Information Transmission (CLEIT) framework. The strategy of CLEIT is to encode the data from both domains into certain latent features. The embedded latent feature has the direct implication of the task of interests and achieves the CLEIT through transferring knowledge via learned representations cross domains
+
+a novel machine learning framework CLEIT for the predictive modeling of genotype-phenotype associations by explicitly modeling the asymmetric CLEIT in the biological system
+
+Although we only study the knowledge transfer between DNA level and RNA level in this article, the same strategy can be applied to other levels in the biological system, for example, imputing proteomics data using transcriptomics data.
+
+the performance of CLEIT could be further improved by incorporating domain knowledge. For example, an autoencoder module that can model gene-gene interac- tions and biological pathways will
+
+Another challenge in personalized medicine is to transfer knowledge from cell line data to patient tissue data (He and Xie, 2021). It
+
+
+
+Cui et al. 2020 - IMAGE! !!
+
+The proposed system consists of three major components. 1) The first component is an end-to-end cellular feature learning module using a deep neural network with global average pooling. The learned cellular representations encode high-level biologically relevant information without requiring individual cell segmentation, which is aggregated into patient-level feature vectors by using a locality-constrained linear coding (LLC)-based bag of words (BoW) encoding algorithm. 2) The second component is a Cox proportional hazards model with an elastic net penalty for robust feature selection and survival analysis. 3) The third commponent is a biomarker interpretation module that can help localize the image regions that contribute to the survival model’s decision.
+
+ure maps as well as stride size equal to 1 and pad size of 1. The activa- tions of the GAP layer are used as feature representations of cells for the subsequent survival analysis
+
+In addition, we probe into the neural network and local-
+ize the discriminative image regions (attentions) for cell classification by following the method in [46]. Several examples of the training patches and the computed class activation maps (CAMs) are
+
+the activa- tions of the GAP layer are robust with respect to image translations and are suitable for cell representations
+
+
+
+Fu et al. 2020 - pas vraiment à voir not useful
+
+we present a general convolutional neural network model that integrates multi-omics informa- tion to prioritize the candidate genes of objective traits
+
+we present ISwine (http://iswine.iomics.pro/), which is an online comprehensive knowledgebase in which we incorporated almost all the published swine multi-omics data. Overall,
+
+There are two commonly used strategies to integrate information from multiple omics. One is to narrow the large set of candidate genes by selecting the overlapping regions based on evidence from different layers of multiple omics, such as selecting the candidate genes that significantly affect the objective traits in both genomics and transcriptomics
+
+The other strategy is to map credible candidates by constructing a network to interpret its functions and biological meanings, such as pathway analysis and co-expression network analysis, to locate the genes within the pathways that are associated with objective traits23,24. However, limited by sample size and experimental design, it is very rare to obtain the evidence from multiple omics information for a specific candidate gene in a single experiment.
+
+we constructed a multi-
+omics database for swine, which is an important non-model organism and one of the most important livestock animals. The
+
+The lime framework (https://github.com/marcotcr/lime) was conducted further to understand the working principle of the CNN model, which suggested that “Nonsynonymous_indel”,
+“Intron_snp”, “Expression”, “Module”, and “QTAL” played important roles in gene prioritization (Fig.
+
+To further confirm the role of each omics in the gene prioritization model, we trained the LR, LinearSVC, MLP, and CNN models using the features of genomes, transcriptomes, and data from the literature. We
+
+the performance of the model constructed using only genomic features was the best, followed by the model that used transcriptomes, and the model based on the literature was the worst. This
+
+
+
+Choi and Quon 2021
+
+
+
+we present a scalable, interpretable variational autoencoder (siVAE) that is interpretable by design: it learns feature embeddings that guide the interpretation of the cell embeddings in a manner analogous to factor loadings of factor analysis
+
+We exploit a number of connections between dimensionality reduction and gene network inference to identify gene neighborhoods and gene hubs, without the explicit need for gene network inference. Finally,
+
+we observe a systematic difference in the gene neighborhoods identified by dimensionality reduction methods and gene network inference algorithms in general, suggesting they provide complementary information about the underlying structure of the gene co-expression network
+
+it is useful to “interpret” the embedding dimensions with respect to the input features. For example, in a visualization of a 2D cell embedding space based on scRNA- seq data, interpretation of the embedding dimensions would identify genes that may be responsible for variation in the transcriptome along different axes of the visualization (Fig.
+
+). Our ability to interpret embedding dimensions rests directly on the dimensionality reduction technique used to compute them. DR approaches can be categorized based on whether they use a linear or non-linear reduction framework.
+
+ Linear DR frameworks are considered less powerful because they can typically be viewed as a specific, restricted implementation of a non-linear framework12. The advantage of linear methods such as Principal Components Analysis (PCA) is that they provide a quantitative estimate of the contribution of individual features towards each embedding dimension. 
+
+In contrast, while non-linear methods such as UMAP, t-SNE and variational autoencoders (VAEs) produce better visualizations in which cells of the same type cluster together more closely (Supplementary Fig. S1), they are not interpretable. That is, they do not estimate the contributions of features to individual embedding dimensions, and therefore require more ad hoc, downstream analysis to gain intuition about the arrangement of cells in the visualization (e.g. understand why specific cells cluster). Beyond
+
+(siVAE) that combines the non- linear DR framework of variational autoencoders (VAEs) with the interpretability of linear PCA
+
+VAEs are non-linear DR methods that uses neural networks to infer a cell embedding space. siVAE is a variant of VAEs that additionally infers a feature embedding space for the genomic features (genes or genomic regions) that is used to interpret the cell embedding space, while being comparable in training time and power to a standard VAE. Compared
+
+the feature embeddings that siVAE learns are useful for characterizing aspects of gene regulatory networks (GRN) while avoiding the challenging process of gene network inference1
+
+the feature embeddings can be used to identify communities of co- regulated genes.
+
+siVAE can also find groups of co-regulated genes that are not readily identified by GRN methods, suggesting the two approaches to identifying co-regulated gene sets are complementary in their findings
+
+siVAE identifies genes with high degree centrality more accurately than ranking genes by explicit node degree in a gene network,
+
+Given that VAEs have been applied to a wide range of genomics data modalities (epigenomics16–18 and miRNA19) and analysis (visualization20,21, trajectory inference22, data imputation23, and perturbation response prediction24–26), our work can therefore enable interpretability in a wide range of downstream applications of VAEs
+
+siVAE is a deep neural network consisting of two pairs of encoder-decoder structures, one for cells and the other for features (
+
+. The cell-wise encoder-decoder learns to compress per-cell measurements Xci into a low dimensional embedding of length K for vizualization and analysis, similar to traditional VAEs 
+
+To facilitate interpretation of the cell state space, siVAE additionally implements a separate feature-wise encoder-decoder network that learns to compress per-genomic features across the cells into a low dimensional embedding of length K analogous to the cell-wise encoder-decoder
+
+The cell- and feature-wise decoders together are used to generate the observed measurement
+
+The strategy siVAE uses to achieve interpretation is best understood by briefly reviewing why probabilistic PCA (PPCA) and factor analysis are interpretable
+
+The underlying generative model behind PPCA can be thought of as similar to a VAE with a linear decoder, and the output of PPCA includes both a factor loading matrix and a score matrix
+
+in PPCA the predicted expression of feature f is assumed to be the dot product of the loadings for feature f and the scores of cell c
+
+PPCA is interpretable:  the larger the contribution of a feature f to a particular dimension k (indicated by the magnitude of v_fk), the more the measurement of feature f is influenced by a cell's corresponding score in that dimension; conversely when the magnitude of v_fk is small (or even 0), then the cell's corresponding score in that dimension does not influence the measurement of feature f in cell c => we say that the PPCA model enforces correspondence between the cell and feature embedding at dimension k
+
+siVAE achieves interpretability of the siVAE scores z_c,k by adding a small interpretability regularization term to its objective function; this term penalizes the deviation between the observed measurement x_c,f and the dot product of the corresponding siVAE scores and the loadings; this small regularization term helps enforce some soft correspondence between dimension k of the cell scores and dimension k of the feature loadings 
+
+siVAE interprets cell embedding spaces faster and more accurately than existing feature attribution approaches
+
+Co-expressed genes cluster in the feature embedding space
+Feature
+
+Feature attributions, or factor loadings, of linear DR methods such as PCA have been exploited extensively in the literature to gain insight into the gene co-expression network (GCN); here
+
+we explore the extent to which the siVAE loading matrix can be leveraged to gain insight into GCN structure. GCNs
+
+GCNs are of interest because they can be used to identify (1) cell population-specific gene modules, representing groups of genes that are highly co-expressed and therefore are likely to function together in a cell type-specific manner, as well as (2) gene hubs, which are genes that are connected via an edge to many more genes than is typical in the network, and typically represent key functional genes in the cell
+
+In our application of dimensionality reduction in which features are all centered and scaled uniformly, the goal of DR methods is to learn (linear or non-linear) patterns of co-expression amongst the input features, that allow accurate reconstruction of the input data from low dimensional representations. 
+
+we view the siVAE loading matrix that siVAE infers as a non-linear analog of the PCA loading matrix. Indeed, one can view probabilistic PCA56 as a restricted form of a VAE in which all of the activation functions in the decoder are linear, no regularization is applied to the decoder weights, and the output distribution is an isotropic Gaussian
+
+
+
+eigengenes (genes captured by factor loadings of PCA) represent network modules in the gene co-expression network5
+
+We hypothesized that siVAE genes captured by feature loadings of siVAE may also represent network modules, and that co- expressed genes in the training data are also proximal in the siVAE feature embedding space.
+
+We found that genes belonging to the same community co-localized in the feature embedding space, but interestingly, the hub nodes are embedded in distinct locations their corresponding community (Fig.
+
+Our interpretation of this observation is that given the limited capacity of the cell embedding space, siVAE tends to keep information specifically about each hub because of their high degree centrality and uses each hub to reconstruct the remaining nodes of their corresponding community. On the other hand, non-hub genes within the same community co- localize in the feature embedding space because the limited capacity of the VAE forces non-hub genes to be predicted similarly, given the retained information about the hub. Interestingly,
+
+the KL divergence term of the feature-wise encoder-decoder of siVAE will tend to draw genes towards the origin
+
+because isolated genes by definition do not co-vary with other genes, information about their expression pattern will tend to be lost during compression, leading the VAE to tend to predict the average expression level of that gene in the decoder (which will be 0, because of data centering). This in turn encourages the feature embedding to be at the origin because the interpretability term encourages the linear product of the feature embedding with the feature loadings to predict the gene’s expression pattern, so if a feature is located at the origin in the feature embedding space, it will cause the predicted expression to be 0.
+
+co-expressed genes cluster in the feature embedding space
+
+markers of the same cell type tend to cluster in feature embedding space as expected (Fig. 4d). Our results overall suggest that co-expressed genes tend to co-localize in siVAE feature embedding space.
+
+Our observation that hub genes in a community are treated differently by siVAE led us to hypothesize that we may be able to identify hub genes from a trained siVAE model without inferring a GRN.
+
+We reasoned that because hub genes are connected to so many other genes, siVAE is more likely to store the expression patterns of hub genes in the compressed representation (latent embedding) for use in reconstructing the rest of the gene expression patterns.
+
+We therefore hypothesized that we could identify hub genes as those genes that are well reconstructed by a trained siVAE model, because if siVAE captures variation in hub gene expression in the cell embedding space, it should also reconstruct the hub gene expression more accurately than other genes
+
+**We therefore used gene-specific reconstruction accuracy in the siVAE model as GRN-free measure of degree centrality**
+
+siVAE consistently selects genes with the largest cumulative degree centrality of all tested methods
+
+these results in total suggest that using siVAE, we can identify high degree centrality genes more accurately than the more classic approach of first inferring a gene co-expression network before identifying high degree centrality genes
+
+we explored the extent to which we could identify neighboring genes that share an edge in a GRN, without having to infer GRNs explicitly. Gene neighbors tend to share similar function62, interact with one another63 and/or belong to the same gene community64. Identification of gene neighbors therefore aids in identifying co-functional genes in the cel
+
+we hypothesized that we could identify gene neighbors directly using a trained siVAE model, instead of having to first infer an explicit GRN. 
+
+GRN inference methods typically output edge weights between pairs of nodes in the network, where larger weights correspond to a greater chance the two nodes share an edge in the underlying GRN. For
+
+For siVAE, we generate edge weights in two ways: (1)
+
+(1) siVAE-Euc, the Euclidean distance of the two genes in the feature embedding space, where smaller distances correspond to closer proximity, and
+
+(2) siVAE-GRN, where we first sample a new scRNA-seq dataset from siVAE that matches the size of the training data, then run a GRN inference method (ARACNE, MRNET, CLR, and GRNBOOST2) on the sampled scRNA-seq dataset to calculate edge weights between genes.
+
+When considering the overlap in neighbors selected by different methods, it is striking how the dimensionality reduction methods cluster strongly (scVI, siVAE, LDVAE) and the GRN inference- based methods cluster strongly as well, with markedly less overlap between these two groups
+
+This is surprising in part because the neighborhood sets are all approximately of the same predictive performance (Fig. 5c), suggesting the DR methods are systematically identifying different neighbors that are as equally co-expressed as the set identified by the GRN methods. In
+
+siVAE-GRN involves identifying gene neighbors using the GRN inference methodology, but just applied to a siVAE-generated dataset (instead of the original training dataset). 
+
+under the siVAE-GRN neighborhood identification framework, the neighborhood genes are still much more similar to siVAE than to the GRN inference methods, suggesting the unique neighborhood identified by the DR methods is a property of the co- expression patterns that DR methods learn, and not due to the way in which neighborhood genes are identified.
+
+Our results therefore suggest that since GRN- and dimensionality reduction-identified neighbor sets are systematically different but approximately equally predictive of neighboring genes, then both approaches should be used to find co-expressed genes in a network
+
+In addition to showing how co-expressed groups of genes can be identified, we also showed how we can identify hub genes, without inferring an explicit GCN. This is useful because GCN inference continues to be a highly challenging task, even in the era of large numbers of cells sequenced from single cell assays15. B
+
+By comparing VAEs trained on different cell populations, it is likely possible to identify differential co-expression patterns between cell populations, also without explicit GCN inference.
+
+the set of neighbors of a given gene with respect to the underlying GCN is systematically different between explicit GCN inference methods and the dimensionality reduction methods. This
+
+**One possible explanation is that DR methods can learn to combine many genes into a single embedding dimension, whereas explicit GCN inference methods ultimately represent co-expression patterns as individual edges between only pairs of genes, and therefore are more limited in their capacity to represent higher order co-expression patterns.**
+
+RE-VAE16, methCancer-gen17, VAEMDA19, scMVAE18, scVI21, Dr.VAE25, scGen26, and Dhaka22 could also so benefit from similar interpretability terms such as that used for siVAE
+
+methods such as InfoGAN72, FactorVAE48, DirVAE73 and others70,74,75 modify generative models such as the VAE to achieve disentangled representation by encouraging the individual cell dimensions to be statistically independent
+
+we do not consider these model variants here because they do not provide contributions of individual features to cell dimensions. These approaches still require users to manually draw samples of points from the cell embedding space, reconstruct the input features from the cell dimensions, then use human intervention to manually inspect how variation across specific dimensions might correspond to human-interpretable factors of variation. However,
+
+the regularization terms that encourages disentanglement between the cell dimensions may be applied to siVAE.
+
+This would help remove the entanglement between cell dimensions such as the overlapping outlines of digits in siVAE loadings for the MNIST dataset
+
+The key idea behind siVAE is that we jointly infer cell-wise and feature-wise state spaces, and through regularization, loosely enforce correspondence between the cell and feature dimensions.
+
+correspondence means variation in dimension k in the cell embedding space corresponds to observed variation in each feature f that is proprotional to feature f's embedding coordinate in dimension k
+
+through correspondence, the feature embedding coordinates (siVAE loadings) become analogous to factor loadings
+
+the cell embedding coordinates (sivAE scores) become analogous to the factor scores of PCA
+
+the feature and cell embeddings are sampled from different latent spaces and projected to higher dimensions through separate decoders, before combining to produce the means of the Gaussians
+
+siVAE turns the last layer of weights leading to the Gaussian mean of the VAE into a non-linear transformation of the latent variables
+
+siVAE can therefore be viewed as putting a prior over a single (last) layer of weights in the VAE
+
+the matrix V encodes the siVAE loadings while the matrix Z encodes the siVAE scores
+
+we can compute siVAE loadings and scores of other hidden layer as well (but here focused on latent space l=1)
+
+the input for 2 encoders is different
+
+1. a vector of observations for a single feature across all training cells
+2. a vector of observations for a single cell across all features
+
+the size of input for feature-wise encoder-decoder increases with the number of cells, which can be very high (millions of input nodes)
+
+downsample the input through i) downsampling or ii) PCA
+
+w training the feature-wise encoder-decoder with downsampled and PCA inputs both results in loss and clustering accuracy score comparable to that of model trained with the full data.
+
+identical neural net designs were used across the feature-wise and cell-wise encoders and decoders in siVAE. The
+
+siVAE is implemented as a Python package and is available from PyPi (https://pypi.org/project/siVAE
+
+Two separate Python packages were used to compute neural network feature attributions in our experiments. We used the DeepExplain Python package that implemented all feature attribution methods (Saliency Maps, Grad*Int, DeepLIFT, IntGrad, Shapley Value) included in our experiments in reverse-mode77. We used the tensorflow-forward- ad Python package for computing Saliency Maps and Grad*Int in forward-mode78
+
+Gene Relevance, we used the published R package45. The method required the latent embeddings learned from siVAE as well as the raw count data corresponding to the embeddings.
+
+
+
+Gene Relevance and other methods output a vector of contributions of feature f to all cell dimension d for cell c
+
+in contrast, siVAE loadings represent a vector of contribution of feature f to all cell dimensions, summarized over all cells
+
+Estimating gene centrality using siVAE. We reasoned that the expression patterns of genes with high degree centrality would be most likely to be retained by siVAE during dimensionality reduction, because those genes could be used to reconstruct the expression patterns of the many other genes connected to them. If so, then the hub genes would also be likely to be the genes whose expression patterns are reconstructed with the lowest error. We therefore define gene centrality for siVAE as the negative reconstruction error of siVAE on each individual gene during training.
+
+Estimating gene centrality using GCN inference methods. The GCN inference methods tested here all output pairwise weights between genes, where larger weights indicated higher confidence in a pairwise edge in the underlying GCN. We therefore measured each query gene’s degree centrality for GCN inference methods by averaging the weights between the query gene and every other gene in the network
+
+we used siVAE to also identify the closest co-expression neighbors of every gene in the genome, using two different approaches based on leveraging the feature embedding space. 
+
+1. 'distance-based network neighbors': we used the  Euclidean distance in the feature embedding space as a measure of distance between 2 genes in the network; the k nearest neighbors of a given query gene were defined as the k genes with shortest distance to the query gene
+2. 'GCN-based approach': passing a matrix of feature embeddings to a GCN inference method as input in place of a typical gene expression matrix input, in order to infer a classic gene co-expression network; from this gene expression network we extracted the nearest neighbors of every gene according to the strategy described for GCN inference methods
+
+Identifying gene co-expression network neighbors using GCN inference methods. For GCN inference methods, we used the output adjacency matrix to identify the closest 20 neighborhood genes per target gene based on largest pairwise weights for each gene
