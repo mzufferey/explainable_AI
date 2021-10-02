@@ -1242,3 +1242,173 @@ we used siVAE to also identify the closest co-expression neighbors of every gene
 2. 'GCN-based approach': passing a matrix of feature embeddings to a GCN inference method as input in place of a typical gene expression matrix input, in order to infer a classic gene co-expression network; from this gene expression network we extracted the nearest neighbors of every gene according to the strategy described for GCN inference methods
 
 Identifying gene co-expression network neighbors using GCN inference methods. For GCN inference methods, we used the output adjacency matrix to identify the closest 20 neighborhood genes per target gene based on largest pairwise weights for each gene
+
+
+
+Kinalis et al. 2019
+
+With specialized training, the autoencoder is not only able to generalize over the data, but also to tease apart biologically meaningful modules, which we found encoded in the representation layer of the network
+
+Our model can, from scRNA-seq data, delineate biological meaningful modules that govern a dataset, as well as give information as to which modules are active in each single cell. Importantly,
+
+most of these modules can be explained by known biological functions, as provided by the Hallmark gene sets
+
+tailored training of an autoencoder makes it possible to deconvolute biological modules inherent in the data, without any assumptions
+
+By comparisons with gene signatures of canonical pathways we see that the modules are directly interpretable.
+
+we applied autoencoder neural networks
+[16], unsupervised machine learning methods, to scRNA-seq expression counts
+
+are able to ef- ficiently capture the underlying signal even when the in- put is perturbed or zeroed out [17], which is particularly appealing for an application to scRNA-seq data
+
+apply methods from the computer graphics com- munity, known as saliency maps [27], aiming to deconvolute what the latent representation of the model captures, and to interpret it in terms of biological pathways
+
+In this study we trained an autoencoder with a soft or-
+thogonality constraint on the representation layer along- side a Poisson loss function. The orthogonality constraint pushes the representation layer to contain information that is disentangled between units.
+
+. With a suitable learning rate we were able to train the model directly on the read count data (without log normalization or preprocessing)
+
+. Our aim is to deconvolute the resulting model and establish a link be- tween the representation layer of our model and biological function
+
+We evaluate the impact of gene sets on the rep- resentation layer of the network by the use of saliency maps. Strikingly, we find that each hidden unit in the dis- tributed model appears to model a distinct term or modal- ity in the data
+
+We saw less entanglement or spillover between nodes, than we expected given the colinearity of gene expression data. It appears that the division of labour is well-defined, and may have intelligible interpretation
+
+Heatmaps of the impact of the Hallmark molecular pathways on the representation layer of the autoencoder trained on Paul et al. The impact is computed via saliency maps
+
+We added the soft or- thogonality criterion in the loss function, as an attempt to deconvolute the highly correlated biological signal, and so that each of the hidden units correspond in essence to one dimension of the representation layer. The
+
+Although the aforementioned methods exhibit better clustering performance than our model, partly due to the application of graph-based methods, the marker gene detec- tion in both methods relies upon identification of differen- tially expressed genes, via simple statistical tests of multiple regression. These tests may be suitable for identification of marker genes of simple traits, but for more complex data- sets with added heterogeneity like cancer, this approach may prove insufficient. A nonlinear neural network is suitable for pattern recognition in complex data and through guided backpropagation of the signal (as performed with saliency maps), we can identify the most important input features (genes) that affect the formation of those patterns. This
+
+We trained an autoencoder with 2 layers for encoding and 2 for decoding, with dimensions 128, 64 and 128 for the hidden layers. The size of the representation layer was chosen to slightly exceed the number of gene sets under investigation, in our case the hallmark molecular path- ways. We
+
+We limited the input dataset to the genes that were present in the signatures, for faster training and memory fit. The
+
+The model was trained with a Poisson negative log-likelihood loss function, to ac- count for the fact that RNA-sequencing expression levels are count data.
+
+The idea behind vanilla saliency maps in deep learning
+is rather intuitive. We compute the gradient of the repre- sentation units with respect to the gene expression input, by testing each representation unit in isolation. That is, we consider that only one representation unit has positive gradient equal to one and the rest have gradient 0, and we let the gradient backpropagate through the network. This way we can see how the representation is affected by small changes in the gene expression levels, or in other words, the impact that each gene has on each representation unit
+
+the guided backpropagation sali- ency maps, that has shown more clear results [48]. The difference is that only positive gradients flow back to the network, the negative gradients are clipped
+
+In order to compute the impact of a gene set to each hid-
+den unit, we simply take the arithmetic mean of the impact of the genes in the set. The resulting pathway impact scores are min-max scaled to the range [0, 1]. In the com- parison scenario, the impact scores of the cells to compare are subtracted and then scaled. The scaling is now per- formed by division with the maximum value of the differ- ence in impact scores, so the final pathways impact scores fall in the range [− 1, 1]. Hidden
+
+
+
+Svensson et al. 2020
+
+
+
+PCA models data as aris- ing from a continuous multivariate Gaussian distribution, and thus optimizes a Gaussian likelihood (Pearson, 1901; Tipping and Bishop, 1999). This model assumption is at odds with the count data meas- ured in single-cell RNA-seq (Svensson, 2020; William Townes et al., 2019), and leads to interpretation problems (Hicks
+
+by adapting the method of scVI (Lopez et al., 2018), we demonstrate a scalable approach to learning a latent representation of single-cell RNA-seq data, that identifies the relationship between cell represen- tation coordinates and gene weights via a factor model.
+
+whereas typically autoencoder models are designed with the same network topology in the inference func- tions and the reconstruction functions, what we propose is a restricted reconstruction function that leads to an increase in recon- struction error. However, by virtue of being linear, our reconstruc- tion function provides an interpretable link between gene programs and cellular molecular phenotypes
+
+We replace the neural network fW znðÞ with a linear function:
+
+This way the expression level lg
+n of a gene g in a cell n is affected
+by the weights wd g depending on the coordinate zd
+n of a cell n, giving
+a direct link between cell representation and gene expression.
+
+a linearly decoded variational autoencoder (LDVAE) in scVI
+
+With either VAE or LDVAE, the representation Z can be used to learn which cells are similar to each other and can be used for clustering.
+
+the axes of representation learned by the LDVAE model can be directly related to axes of co-expressed genes
+
+The learned Z representations from the different models can be compared by investigating the covariance matrix ^Z
+T ^Z (where ^Z is a
+centered and scaled version of Z). This illustrates that LDVAE learns representations with fewer covarying factors zd
+
+Unlike linear methods, the VAE is not constrained by covarying factors since the non-linear neural network fW ?ðÞ can produce vastly different gene expressions along a linear path in the Z representa- tion. Comparing
+
+Comparing the proposed alternative LDVAE models, using a normal latent distribution induces less correlation between factors.
+
+By performing eigen decomposition on a covariance matrix the pro- portion of variance explained by each factor can be quantified. This allows ordering of factors which can be used to identify the regula- tory programs with the most variation across the dataset. It also illustrates the simplicial structure of ln distributed latent variables since one factor is always linearly dependent on the other factors
+
+
+
+Liu et al. 2021
+
+. TranSynergy is designed so that the cellular effect of drug actions can be explicitly modeled through cell-line gene dependency, gene-gene interaction, and genome-wide drug-target interaction. A novel Shapley Additive Gene Set Enrichment Analysis (SA- GSEA) method has been developed to deconvolute genes that contribute to the synergistic drug combination and improve model interpretability
+
+Novel pathways that are associated with the synergis- tic combinations are revealed and supported by experimental evidences.
+
+We have developed a knowledge-enabled deep learning model, TranS- ynergy, to predict synergistic drug combinations
+
+A novel Shapley Additive Gene Set Enrich- ment Analysis (SA-GSEA) method is introduced to improve the interpretability ofthe machine learning model. Using TransSynergy and SA-GSEA, we can deconvolute genes responsible for the synergistic drug combination, suggesting the potential ofmachine learning in developing precision anti-cancer therapy
+
+a mechanism-driven and self-attention boosted deep learning model TranSynergy for the prediction ofsynergistic drug combinations and the deconvolution ofcellular mechanisms contributing to them
+
+We applied the random walk with restart algorithm (RWR) on a protein-protein interaction (PPI) network to infer a novel drug-target profile as the drug features
+
+For the features ofeach cell line, we used gene expres- sions or gene dependencies profile. These mechanism related features make the model readily interpretable
+
+we applied the self-attention transformer to encode the gene-gene interactions responsible for the synergistic drug combination.
+
+To reveal novel genes that are associated with the synergistic drug combination from the learned biological relations in the TranSynergy model, we developed a novel Shapley Additive Gene Set Enrichment Analysis (SA-GSEA) based on SHAP [33]. The revealed novel gene set may serve as a patient-specific biomarker for precision medicine or drug targets for discovering new cancer combination therapy. 
+
+TranSynergy is a transformer boosted deep learning model for the prediction ofdrug combi- nation synergy. It includes three major components, input dimension reduction component, self-attention transformer component, and output fully connected component (Fig
+
+input features are composed ofthree vectors
+
+The first two columns are the representations oftwo drugs. The third column is the representation ofthe cell lines.
+
+. In the matrix, each row corresponds to a gene or protein, and encodes the impact ofdrug on the gene
+
+The input dimension reduction component is a single-layer neural network to reduce the dimension of input. The
+
+The modified transformer component takes the output from the first component and includes a scaled dot product based self-attention mechanism module
+
+Here, the self-attention is applied to model gene-gene interactions. It is also worth noting that we customized the transformer model by removing the positional encoding layer since the order input feature dimensions should be irrelevant to the final prediction.
+
+Then the final output ofthe predicted synergy score comes from a fully connected neural network. The
+
+The input ofour deep learning model includes the vector representations oftwo drug mole-
+cules in the drug combination and a cell line that is treated by the drug combination. O
+
+We also need to encode the effect ofdrugs on down-stream non-target proteins and the whole biological sys- tem. The protein-protein interaction network is utilized to infer the drug response ofthe non- target proteins considering that the protein-protein interaction mediates information trans- mission in the biological system
+
+We apply the RWR algorithm to simulate this network propa- gation process
+
+Compared with the chemical information-based approaches for drug representation, the target-based representation ofdrug molecules has the following advan- tages. Firstly, drug target information is closely related to the cellular response to the drug treatment at both the molecular level and system level. Secondly, it makes it possible to explain the model output, drug combination synergy, in terms ofthe contribution ofeach protein or gene
+
+Because drug-combination therapy has cell line-specific responses, another important com-
+ponent ofinputs is the cell line vector representation. The DeepSynergy uses gene expression profile as the cell line vector representation [24]. We have applied a novel alternative strategy to infer cell line vector representation. The
+
+The gene essentiality varies in the different cell lines and plays a critical role in anti-cancer drug sensitivity. Intuitively, drugs that affect essential proteins will cause the cell to have a more devastating response. Thus,
+
+Thus, we take gene essentiality or gene dependence into account and this information is one ofthe inputs into our mode
+
+To investigate whether the gene-gene interaction network propagation step is essential for the model performance, we compared the TranSynergy model trained with only observed drug target information with that trained with network propagated drug target information
+
+we implemented two novel infrastructures, TranSynergyCI and TranSyner-
+gyGNF, to investigate whether the prediction could be improved further by integrating extra chemical information.
+
+s adding extra chemical information may not be necessary to boost the perfor- mance any further in this experimental setup.
+
+Shapley Additive Gene Set Enrichment Analysis (SA-GSEA) to deter- mine the oncogenic signature and the underlying mechanisms associated with each synergistic drug combination (see
+
+Because each ofthe features in TranSynergy corresponds to a gene, the Shapley value essentially indicates the attri- bute ofeach gene to the synergy prediction. Moreover, genes could be ranked based on the Shapley value ofeach input gene feature. This makes it feasible to perform GSEA analysis.
+
+a novel deep learning model TranSynergy for the synergy score prediction and mechanism deconvolution ofdrug combination cancer therapy
+
+the network propagated drug target profile, which indicated both drug-tar- get interaction and drug effect on non-targeted proteins, was crucial for the comprehensive representation ofdrug features.
+
+gene essentiality in the cancer cells is a more desirable cell line representation than raw gene expression profile.
+
+, many explainable AI methods have been pro- posed, such as input perturbation methods [60,61], backpropagation based methods [62], and the calculation ofSHAP values [33].
+
+Attention-based approaches have been proposed to inter- pret the models using attention mechanisms.
+
+attention weights learned from self-attentions may not provide a meaningful explanation for the final prediction
+
+we carefully design the input features so that each feature dimension is corresponding to a gene and is easily interpretable. Through examining the SHAP values ofgene-wise input feature, we extract the information regarding the effect of drug-target interactions and gene-gene interactions on the cancer cell response.
+
+The transformer has been widely used and shown promising performance
+in many different applications, including natural language processing and image processing [29–31]. It includes two major components, encoder and decoder. The input for both encoder and decoder has three matrices, query, key and values. Both encoder and decoder contain many sublayers. Each sublayer is comprised ofthree stages, attention mechanism, add & norm stage, and feed forward stage. The add & norm stage contains a residual structure and a layer normalization structure. The attention mechanism is the module to encode the interaction of different features with the following equation:
